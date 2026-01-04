@@ -5,6 +5,7 @@ import controller.mappers.DynamicRenderableMapper;
 import controller.mappers.RenderableMapper;
 import controller.mappers.WeaponMapper;
 import controller.ports.DomainEventProcesor;
+import controller.ports.EngineState;
 import controller.ports.WorldEvolver;
 import controller.ports.WorldInitializer;
 

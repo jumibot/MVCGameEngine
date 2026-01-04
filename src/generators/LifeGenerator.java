@@ -3,7 +3,8 @@ package generators;
 import java.util.Random;
 import _helpers.DoubleVector;
 import controller.Controller;
-import controller.EngineState;
+import controller.ports.EngineState;
+
 import java.util.ArrayList;
 import world.WorldDefItemDto;
 import world.WorldDefinition;

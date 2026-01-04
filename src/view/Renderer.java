@@ -5,7 +5,6 @@ import view.huds.PlayerHud;
 import view.renderables.DynamicRenderDTO;
 import view.renderables.Renderable;
 import view.renderables.DynamicRenderable;
-import controller.EngineState;
 import images.ImageCache;
 import images.Images;
 
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import controller.ports.EngineState;
 import view.renderables.RenderDTO;
 
 /**

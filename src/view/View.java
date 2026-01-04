@@ -4,7 +4,7 @@ import view.renderables.DynamicRenderDTO;
 import assets.AssetCatalog;
 import assets.AssetType;
 import controller.Controller;
-import controller.EngineState;
+import controller.ports.EngineState;
 import images.Images;
 
 import java.awt.Container;
