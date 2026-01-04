@@ -21,11 +21,10 @@ public class BasicWeapon extends AbstractWeapon {
 
         if (this.getCurrentAmmo() <= 0) {
             // No ammunition: reload, set time to reload and discard requests
-            this.setState(WeaponState.RELOADING);
-            this.setState(WeaponState.RELOADING);
+            this.setState   (WeaponState.RELOADING);
             this.markAllRequestsHandled();
             this.setCooldown(this.getWeaponConfig().reloadTime);
-            this.setCurrentAmmo(this.getWeaponConfig().maxAmmo) ;
+            this.setCurrentAmmo(this.getWeaponConfig().maxAmmo);
             return false;
         }
 

@@ -6,7 +6,6 @@ import model.weapons.ports.WeaponState;
 
 public class BurstWeapon extends AbstractWeapon {
 
-    private double cooldown = 0.0d; // seconds until next shot is allowed
     private int shotsRemainingInBurst = 0;
 
     public BurstWeapon(WeaponDto weaponConfig) {
@@ -15,10 +14,10 @@ public class BurstWeapon extends AbstractWeapon {
 
     @Override
     public boolean mustFireNow(double dtSeconds) {
-        if (this.cooldown > 0) {
+        if (this.getCooldown() > 0) {
             // Cool down weapon between shots or between bursts.
             // Any pending requests.
-            this.cooldown -= dtSeconds;
+            this.decCooldown(dtSeconds);
             this.markAllRequestsHandled();
             return false; // ======== Weapon is overheated =========>
         }
@@ -43,10 +42,10 @@ public class BurstWeapon extends AbstractWeapon {
 
             if (this.shotsRemainingInBurst == 0) {
                 // Burst finished. Cooldown between bursts
-                this.cooldown = 1.0 / this.getWeaponConfig().fireRate;
+                this.setCooldown(1.0 / this.getWeaponConfig().fireRate);
             } else {
                 // More shots to fire in this burst. Cooldown between shots
-                this.cooldown = 1.0 / this.getWeaponConfig().burstFireRate;
+                this.setCooldown(1.0 / this.getWeaponConfig().burstFireRate);
             }
 
             return true; // ======== Requesting shot ======>
@@ -66,9 +65,9 @@ public class BurstWeapon extends AbstractWeapon {
 
         // Cooldown depends on whether burst continues
         if (this.shotsRemainingInBurst == 0) {
-            this.cooldown = 1.0 / this.getWeaponConfig().fireRate; // between bursts
+            this.setCooldown(1.0 / this.getWeaponConfig().fireRate); // between bursts
         } else {
-            this.cooldown = 1.0 / this.getWeaponConfig().burstFireRate; // between burst shots
+            this.setCooldown(1.0 / this.getWeaponConfig().burstFireRate); // between burst shots
         }
         
         return true; // ====== Requesting first shot ======>

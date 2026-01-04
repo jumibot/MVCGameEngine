@@ -5,7 +5,6 @@ import model.weapons.ports.WeaponDto;
 import model.weapons.ports.WeaponState;
 
 public class MineLauncher extends AbstractWeapon {
-    private double cooldown = 0.0; // seconds
 
     public MineLauncher(WeaponDto weaponConfig) {
         super(weaponConfig);
@@ -15,16 +14,17 @@ public class MineLauncher extends AbstractWeapon {
     public boolean mustFireNow(double dtSeconds) {
         if (this.getCooldown() > 0) {
             // Cool down weapon. Any pending requests are discarded.
-            this.decCooldown(dtSeconds);;
+            this.decCooldown(dtSeconds);
+            ;
             this.markAllRequestsHandled();
             return false; // =================>
         }
 
-       if (this.getCurrentAmmo() <= 0) {
+        if (this.getCurrentAmmo() <= 0) {
             // No ammunition: reload, set time to reload and discard requests
             this.setState(WeaponState.RELOADING);
             this.markAllRequestsHandled();
-            cooldown = this.getWeaponConfig().reloadTime;
+            this.setCooldown(this.getWeaponConfig().reloadTime);
             this.setCurrentAmmo(this.getWeaponConfig().maxAmmo);
             return false;
         }
