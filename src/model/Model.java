@@ -18,16 +18,19 @@ import model.bodies.StaticBody;
 import model.bodies.core.AbstractBody;
 import model.bodies.core.BodyDTO;
 import model.bodies.ports.BodyState;
+
 import model.physics.BasicPhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
+
 import model.ports.ActionDTO;
 import model.ports.ActionType;
 import model.ports.EventDTO;
 import model.ports.EventType;
 import model.ports.ModelState;
-import model.weapons.core.WeaponFactory;
+
 import model.weapons.ports.Weapon;
 import model.weapons.ports.WeaponDto;
+import model.weapons.ports.WeaponFactory;
 
 /**
  * Model

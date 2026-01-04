@@ -1,4 +1,4 @@
-package model.ports;
+package model.ports.body;
 
 /**
  * Data required to spawn a player-controlled body in the simulation.

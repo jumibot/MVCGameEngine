@@ -1,4 +1,4 @@
-package model.ports;
+package model.ports.body;
 
 /**
  * Contract for spawning bodies inside the simulation.

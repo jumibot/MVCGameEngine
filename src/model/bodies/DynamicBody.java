@@ -6,6 +6,7 @@ import model.physics.ports.PhysicsValuesDTO;
 import model.ports.ModelState;
 import model.bodies.core.AbstractBody;
 import model.bodies.ports.BodyState;
+import model.bodies.ports.BodyType;
 import model.bodies.ports.PhysicsBody;
 
 /**
@@ -51,13 +52,13 @@ public class DynamicBody extends AbstractBody implements PhysicsBody, Runnable {
      * CONSTRUCTORS
      */
     public DynamicBody(BasicPhysicsEngine phyEngine) {
-        super(phyEngine);
+        super(phyEngine, BodyType.DYNAMIC);
 
         this.phyEngine = phyEngine;
     }
 
     public DynamicBody(BasicPhysicsEngine phyEngine, double maxLifeInSeconds) {
-        super(phyEngine, maxLifeInSeconds);
+        super(phyEngine, maxLifeInSeconds, BodyType.DYNAMIC);
 
         this.phyEngine = phyEngine;
     }

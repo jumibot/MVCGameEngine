@@ -1,4 +1,4 @@
-package model.ports;
+package model.ports.body;
 
 public class CreateDynamicBodyDto {
     public final double size;

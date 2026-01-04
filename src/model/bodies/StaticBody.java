@@ -2,6 +2,7 @@ package model.bodies;
 
 import model.bodies.core.AbstractBody;
 import model.bodies.ports.BodyState;
+import model.bodies.ports.BodyType;
 import model.physics.NullPhysicsEngine;
 
 /**
@@ -44,7 +45,7 @@ public class StaticBody extends AbstractBody {
      * CONSTRUCTORS
      */
     public StaticBody(double size, double x, double y, double angle) {
-        super(new NullPhysicsEngine(size, x, y, angle));
+        super(new NullPhysicsEngine(size, x, y, angle), BodyType.STATIC);
     }
 
     /**

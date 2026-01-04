@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import model.Model;
 import model.bodies.ports.BodyState;
+import model.bodies.ports.BodyType;
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
 
@@ -13,13 +14,13 @@ import model.physics.ports.PhysicsValuesDTO;
  */
 public abstract class AbstractBody {
 
-    /* TO-DO: Replace individual static counters by one static array of counters */
     private static volatile int aliveQuantity = 0;
     private static volatile int createdQuantity = 0;
     private static volatile int deadQuantity = 0;
 
     private Model model = null;
     private volatile BodyState state;
+    private final BodyType type;
     private final String entityId;
     private final PhysicsEngine phyEngine;
     private final long bornTime = System.nanoTime();
@@ -28,16 +29,17 @@ public abstract class AbstractBody {
     /**
      * CONSTRUCTORS
      */
-    public AbstractBody(PhysicsEngine phyEngine) {
-        this(phyEngine, -1D);
+    public AbstractBody(PhysicsEngine phyEngine, BodyType type) {
+        this(phyEngine, -1D, type);
     }
 
-    public AbstractBody(PhysicsEngine phyEngine, double maxLifeInSeconds) {
+    public AbstractBody(PhysicsEngine phyEngine, double maxLifeInSeconds, BodyType type) {
         this.entityId = UUID.randomUUID().toString();
 
         this.phyEngine = phyEngine;
         this.state = BodyState.STARTING;
         this.maxLifeInSeconds = maxLifeInSeconds;
+        this.type = type;
     }
 
     public synchronized void activate() {

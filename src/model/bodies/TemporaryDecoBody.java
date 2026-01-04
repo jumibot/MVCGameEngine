@@ -1,6 +1,7 @@
 package model.bodies;
 
 import model.bodies.ports.BodyState;
+import model.bodies.ports.BodyType;
 import model.ports.ModelState;
 
 public class TemporaryDecoBody extends DecoBody implements Runnable {
@@ -11,7 +12,7 @@ public class TemporaryDecoBody extends DecoBody implements Runnable {
      * CONSTRUCTORS
      */
     public TemporaryDecoBody(double size, double posX, double posY, double angle, long maxLifeInSeconds) {
-        super(size, posX, posY, angle);
+        super(size, posX, posY, angle, BodyType.TEMPORARY_DECO);
 
         this.maxLifeInSeconds = maxLifeInSeconds;
     }

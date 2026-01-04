@@ -177,7 +177,7 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
                 accX, accY, angle, angularSpeed, angularAcc, thrust);
 
         if (entityId == null || entityId.isEmpty()) {
-            return; // ======= Max entity quantity reached =======>>
+            return; // ======= Max entity quantity reached =======>
         }
         this.view.addDynamicRenderable(entityId, assetId);
     }
@@ -186,7 +186,7 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
         String entityId = this.model.addDecorator(size, posX, posY, angle);
 
         if (entityId == null || entityId.isEmpty()) {
-            return; // ======= Max entity quantity reached =======>>
+            return; // ======= Max entity quantity reached =======>
         }
         this.view.addStaticRenderable(entityId, assetId);
         ArrayList<BodyDTO> bodiesData = this.model.getStaticsData();
