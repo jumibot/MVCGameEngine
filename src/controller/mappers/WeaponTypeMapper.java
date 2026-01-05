@@ -1,7 +1,7 @@
 package controller.mappers;
 
 import model.weapons.ports.WeaponType;
-import world.WorldDefWeaponType;
+import world.ports.WorldDefWeaponType;
 
 public class WeaponTypeMapper {
     public static WeaponType fromWorldDef(WorldDefWeaponType type) {

@@ -5,6 +5,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import images.ImageCache;
+import view.renderables.ports.RenderDTO;
 
 public class Renderable {
 

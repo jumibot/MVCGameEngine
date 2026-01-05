@@ -1,22 +1,24 @@
 package controller;
 
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
+
 import assets.AssetCatalog;
+import view.View;
+import model.Model;
+
 import controller.mappers.DynamicRenderableMapper;
 import controller.mappers.RenderableMapper;
 import controller.mappers.WeaponMapper;
+
 import controller.ports.DomainEventProcesor;
 import controller.ports.EngineState;
 import controller.ports.WorldEvolver;
 import controller.ports.WorldInitializer;
 
-import java.awt.Dimension;
-import view.renderables.DynamicRenderDTO;
-import view.View;
-import model.Model;
-
-import model.bodies.core.AbstractBody;
-import model.bodies.core.BodyDTO;
-
+import model.bodies.ports.BodyDTO;
+import model.bodies.ports.BodyType;
 import model.weapons.ports.WeaponDto;
 import model.ports.ActionDTO;
 import model.ports.ActionExecutor;
@@ -24,12 +26,9 @@ import model.ports.ActionPriority;
 import model.ports.ActionType;
 import model.ports.EventDTO;
 import model.ports.EventType;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import view.renderables.RenderDTO;
-import world.WorldDefWeaponDto;
+import view.renderables.ports.DynamicRenderDTO;
+import view.renderables.ports.RenderDTO;
+import world.ports.WorldDefWeaponDto;
 
 /**
  * Controller
@@ -235,7 +234,7 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
         this.model.addWeaponToPlayer(playerId, weapon);
     }
 
-    private List<ActionDTO> applyGameRules(AbstractBody body, EventDTO event) {
+    private List<ActionDTO> applyGameRules(BodyType bodyType, EventDTO event) {
 
         List<ActionDTO> actions = new ArrayList<>(2);
 
@@ -267,13 +266,13 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
         return actions;
     }
 
-    public List<ActionDTO> decideActions(AbstractBody body, List<EventDTO> events) {
+    public List<ActionDTO> decideActions(BodyType bodyType, List<EventDTO> events) {
         List<ActionDTO> actions = new ArrayList<>();
 
         if (events != null) {
             for (EventDTO event : events) {
                 if (event != null && event.eventType != null && event.eventType != EventType.NONE) {
-                    actions.addAll(applyGameRules(body, event));
+                    actions.addAll(applyGameRules(bodyType, event));
                 }
             }
         }

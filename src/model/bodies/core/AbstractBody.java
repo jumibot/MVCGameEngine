@@ -77,14 +77,6 @@ public abstract class AbstractBody {
         return (System.nanoTime() - this.bornTime) / 1_000_000_000.0D;
     }
 
-    public boolean isLifeOver() {
-        if (this.maxLifeInSeconds <= 0) {
-            return false;
-        }
-
-        return this.getLifeInSeconds() >= this.maxLifeInSeconds;
-    }
-
     public double getLifePercentage() {
         if (this.maxLifeInSeconds <= 0) {
             return 1D;
@@ -107,6 +99,18 @@ public abstract class AbstractBody {
 
     public BodyState getState() {
         return this.state;
+    }
+
+    public BodyType getType() {
+        return this.type;
+    }
+
+    public boolean isLifeOver() {
+        if (this.maxLifeInSeconds <= 0) {
+            return false;
+        }
+
+        return this.getLifeInSeconds() >= this.maxLifeInSeconds;
     }
 
     public void setModel(Model model) {

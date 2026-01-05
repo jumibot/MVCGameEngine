@@ -2,8 +2,9 @@ package view;
 
 import view.huds.SystemHud;
 import view.huds.PlayerHud;
-import view.renderables.DynamicRenderDTO;
 import view.renderables.Renderable;
+import view.renderables.ports.DynamicRenderDTO;
+import view.renderables.ports.RenderDTO;
 import view.renderables.DynamicRenderable;
 import images.ImageCache;
 import images.Images;
@@ -23,7 +24,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import controller.ports.EngineState;
-import view.renderables.RenderDTO;
 
 /**
  * Renderer

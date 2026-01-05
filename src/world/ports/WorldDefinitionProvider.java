@@ -1,6 +1,4 @@
-package world.providers.ports;
-
-import world.WorldDefinition;
+package world.ports;
 
 public interface WorldDefinitionProvider {
 

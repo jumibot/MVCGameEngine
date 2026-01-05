@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import controller.ports.WorldInitializer;
-import world.WorldDefPositionItemDto;
-import world.WorldDefinition;
+import world.ports.WorldDefPositionItemDto;
+import world.ports.WorldDefinition;
 
 public class SceneGenerator {
 

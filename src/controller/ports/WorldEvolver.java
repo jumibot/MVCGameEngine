@@ -2,7 +2,7 @@ package controller.ports;
 
 import java.awt.Dimension;
 
-import world.WorldDefWeaponDto;
+import world.ports.WorldDefWeaponDto;
 
 public interface WorldEvolver {
 

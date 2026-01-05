@@ -1,4 +1,4 @@
-package world;
+package world.ports;
 
 public enum WorldDefWeaponType {
     PRIMARY_WEAPON,

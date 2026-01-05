@@ -6,8 +6,9 @@ import controller.Controller;
 import controller.ports.EngineState;
 
 import java.util.ArrayList;
-import world.WorldDefItemDto;
-import world.WorldDefinition;
+
+import world.ports.WorldDefItemDto;
+import world.ports.WorldDefinition;
 
 public class LifeGenerator implements Runnable {
 

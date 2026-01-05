@@ -1,4 +1,4 @@
-package world;
+package world.core;
 
 
 public class WorldDefBackgroundDto {

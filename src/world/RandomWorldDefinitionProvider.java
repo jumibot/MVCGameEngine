@@ -1,4 +1,4 @@
-package world.providers;
+package world;
 
 import assets.AssetCatalog;
 import assets.AssetInfoDTO;
@@ -7,13 +7,13 @@ import assets.ProjectAssets;
 import java.util.ArrayList;
 import java.util.Random;
 
-import world.WorldDefBackgroundDto;
-import world.WorldDefItemDto;
-import world.WorldDefPositionItemDto;
-import world.WorldDefWeaponDto;
-import world.WorldDefWeaponType;
-import world.WorldDefinition;
-import world.providers.ports.WorldDefinitionProvider;
+import world.core.WorldDefBackgroundDto;
+import world.ports.WorldDefItemDto;
+import world.ports.WorldDefPositionItemDto;
+import world.ports.WorldDefWeaponDto;
+import world.ports.WorldDefWeaponType;
+import world.ports.WorldDefinition;
+import world.ports.WorldDefinitionProvider;
 
 public class RandomWorldDefinitionProvider implements WorldDefinitionProvider {
 

@@ -5,7 +5,7 @@ package main;
  * ===== 
  * 1) Create HUD for player info
  * 2) Colision detection
- * 3) Game rules
+ * 3) Game rules injection
  * 4) Create a new physic engine with a gravitational field 
  * 5) Basic Fx
  * 6) Comms
@@ -18,9 +18,9 @@ import generators.LifeGenerator;
 import generators.SceneGenerator;
 import model.Model;
 import view.View;
-import world.WorldDefinition;
-import world.providers.RandomWorldDefinitionProvider;
-import world.providers.ports.WorldDefinitionProvider;
+import world.RandomWorldDefinitionProvider;
+import world.ports.WorldDefinition;
+import world.ports.WorldDefinitionProvider;
 
 public class Main {
 

@@ -16,9 +16,9 @@ import model.bodies.DynamicBody;
 import model.bodies.PlayerBody;
 import model.bodies.StaticBody;
 import model.bodies.core.AbstractBody;
-import model.bodies.core.BodyDTO;
+import model.bodies.ports.BodyDTO;
 import model.bodies.ports.BodyState;
-
+import model.bodies.ports.BodyType;
 import model.physics.BasicPhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
 
@@ -266,7 +266,7 @@ public class Model {
         ArrayList<BodyDTO> bodyData = new ArrayList<BodyDTO>(bodies.size());
 
         bodies.forEach((entityId, body) -> {
-            BodyDTO bodyInfo = new BodyDTO(entityId, body.getPhysicsValues());
+            BodyDTO bodyInfo = new BodyDTO(entityId, body.getType(), body.getPhysicsValues());
             if (bodyInfo != null) {
                 bodyData.add(bodyInfo);
             }
@@ -368,7 +368,7 @@ public class Model {
                     dynamicBody, newPhyValues, oldPhyValues);
 
             List<ActionDTO> actions = this.resolveActionsForEvents(
-                    dynamicBody, events);
+                    dynamicBody.getType(), events);
 
             this.doActions(
                     dynamicBody, actions, newPhyValues, oldPhyValues);
@@ -432,9 +432,9 @@ public class Model {
     }
 
     private List<ActionDTO> resolveActionsForEvents(
-            AbstractBody entity, List<EventDTO> events) {
+            BodyType bodyType, List<EventDTO> events) {
 
-        List<ActionDTO> actionsFromController = this.domainEventProcessor.decideActions(entity, events);
+        List<ActionDTO> actionsFromController = this.domainEventProcessor.decideActions(bodyType, events);
 
         if (actionsFromController == null || actionsFromController.isEmpty()) {
             return java.util.Collections.emptyList();

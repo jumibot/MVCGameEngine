@@ -1,6 +1,8 @@
-package world;
+package world.ports;
 
 import assets.AssetCatalog;
+import world.core.WorldDefBackgroundDto;
+
 import java.util.ArrayList;
 
 public class WorldDefinition {

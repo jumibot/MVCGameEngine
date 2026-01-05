@@ -1,4 +1,4 @@
-package world;
+package world.ports;
 
 public class WorldDefWeaponDto extends WorldDefItemDto {
 

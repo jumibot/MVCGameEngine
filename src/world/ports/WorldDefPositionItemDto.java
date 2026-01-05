@@ -1,5 +1,4 @@
-package world;
-
+package world.ports;
 
 public class WorldDefPositionItemDto extends WorldDefItemDto {
 

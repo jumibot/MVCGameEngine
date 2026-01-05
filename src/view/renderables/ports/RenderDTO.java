@@ -1,4 +1,4 @@
-package view.renderables;
+package view.renderables.ports;
 
 public class RenderDTO {
 
