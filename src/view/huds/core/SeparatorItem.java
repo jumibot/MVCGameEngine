@@ -1,4 +1,4 @@
-package view.huds;
+package view.huds.core;
 
 public class SeparatorItem extends Item {
     public SeparatorItem() {

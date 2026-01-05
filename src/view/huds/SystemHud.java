@@ -2,6 +2,8 @@ package view.huds;
 
 import java.awt.Color;
 
+import view.huds.core.Hud;
+
 public class SystemHud extends Hud {
     public SystemHud() {
         super(

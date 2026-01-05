@@ -1,4 +1,4 @@
-package view.huds;
+package view.huds.core;
 
 import java.awt.Color;
 import java.awt.Font;
