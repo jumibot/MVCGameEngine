@@ -3,11 +3,11 @@ package model.bodies.core;
 import java.util.UUID;
 
 import model.bodies.ports.Body;
+import model.bodies.ports.BodyEventProcessor;
 import model.bodies.ports.BodyState;
 import model.bodies.ports.BodyType;
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
-import model.ports.BodyEventProcessor;
 
 /**
  *

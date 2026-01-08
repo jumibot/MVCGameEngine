@@ -2,9 +2,9 @@ package model.bodies.implementations;
 
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
-import model.ports.BodyEventProcessor;
 import model.ports.ModelState;
 import model.bodies.core.AbstractPhysicsBody;
+import model.bodies.ports.BodyEventProcessor;
 import model.bodies.ports.BodyState;
 import model.bodies.ports.BodyType;
 

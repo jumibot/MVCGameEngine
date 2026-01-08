@@ -1,11 +1,11 @@
 package model.bodies.implementations;
 
 import model.bodies.core.AbstractPhysicsBody;
+import model.bodies.ports.BodyEventProcessor;
 import model.bodies.ports.BodyState;
 import model.bodies.ports.BodyType;
 import model.bodies.ports.PhysicsBody;
 import model.physics.implementations.NullPhysicsEngine;
-import model.ports.BodyEventProcessor;
 
 /**
  * StaticBody

@@ -2,10 +2,10 @@ package model.bodies.implementations;
 
 import java.util.List;
 
+import model.bodies.ports.BodyEventProcessor;
 import model.bodies.ports.BodyType;
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
-import model.ports.BodyEventProcessor;
 import model.weapons.ports.Weapon;
 import model.weapons.ports.WeaponDto;
 

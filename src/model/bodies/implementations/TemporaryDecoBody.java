@@ -1,10 +1,10 @@
 package model.bodies.implementations;
 
 import model.bodies.core.AbstractBody;
+import model.bodies.ports.BodyEventProcessor;
 import model.bodies.ports.BodyState;
 import model.bodies.ports.BodyType;
 import model.physics.implementations.NullPhysicsEngine;
-import model.ports.BodyEventProcessor;
 
 public class TemporaryDecoBody extends AbstractBody implements Runnable {
 

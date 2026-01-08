@@ -1,10 +1,10 @@
 package model.bodies.core;
 
+import model.bodies.ports.BodyEventProcessor;
 import model.bodies.ports.BodyType;
 import model.bodies.ports.PhysicsBody;
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
-import model.ports.BodyEventProcessor;
 
 public class AbstractPhysicsBody extends AbstractBody implements PhysicsBody {
 
