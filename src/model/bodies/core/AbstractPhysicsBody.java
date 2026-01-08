@@ -4,15 +4,12 @@ import model.bodies.ports.BodyType;
 import model.bodies.ports.PhysicsBody;
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
+import model.ports.BodyEventProcessor;
 
 public class AbstractPhysicsBody extends AbstractBody implements PhysicsBody {
 
-    public AbstractPhysicsBody(PhysicsEngine phyEngine, BodyType type) {
-        super(phyEngine, type);
-    }
-
-    public AbstractPhysicsBody(PhysicsEngine phyEngine, double maxLifeInSeconds, BodyType type) {
-        super(phyEngine, maxLifeInSeconds, type);
+    public AbstractPhysicsBody(BodyEventProcessor bodyEventProcessor, PhysicsEngine phyEngine, BodyType bodyType, double maxLifeInSeconds) {
+        super(bodyEventProcessor, phyEngine, bodyType, maxLifeInSeconds);
     }
 
     public PhysicsValuesDTO getPhysicsValues() {

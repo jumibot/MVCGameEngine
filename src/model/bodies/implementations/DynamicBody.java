@@ -2,6 +2,7 @@ package model.bodies.implementations;
 
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
+import model.ports.BodyEventProcessor;
 import model.ports.ModelState;
 import model.bodies.core.AbstractPhysicsBody;
 import model.bodies.ports.BodyState;
@@ -48,20 +49,10 @@ public class DynamicBody extends AbstractPhysicsBody implements Runnable {
     /**
      * CONSTRUCTORS
      */
-    public DynamicBody(PhysicsEngine phyEngine) {
-        super(phyEngine, BodyType.DYNAMIC);
-    }
-
-    public DynamicBody(PhysicsEngine phyEngine, BodyType bodyType) {
-        super(phyEngine, bodyType);
-    }
-
-    public DynamicBody(PhysicsEngine phyEngine, double maxLifeInSeconds) {
-        super(phyEngine, maxLifeInSeconds, BodyType.DYNAMIC);
-    }
-
-    public DynamicBody(PhysicsEngine phyEngine, double maxLifeInSeconds, BodyType bodyType) {
-        super(phyEngine, maxLifeInSeconds, bodyType);
+    public DynamicBody(BodyEventProcessor bodyEventProcessor, 
+        PhysicsEngine phyEngine, BodyType bodyType, double maxLifeInSeconds) {
+            
+        super(bodyEventProcessor, phyEngine, bodyType, maxLifeInSeconds);
     }
 
     /**
@@ -90,14 +81,11 @@ public class DynamicBody extends AbstractPhysicsBody implements Runnable {
     public void run() {
         PhysicsValuesDTO newPhyValues;
 
-        while ((this.getState() != BodyState.DEAD)
-                && (this.getModel().getState() != ModelState.STOPPED)) {
+        while (this.getState() != BodyState.DEAD) {
 
-            if ((this.getState() == BodyState.ALIVE)
-                    && (this.getModel().getState() == ModelState.ALIVE)) {
-
+            if (this.getState() == BodyState.ALIVE) {
                 newPhyValues = this.getPhysicsEngine().calcNewPhysicsValues();
-                this.getModel().processBodyEvents(this, newPhyValues, this.getPhysicsEngine().getPhysicsValues());
+                this.processBodyEvents(this, newPhyValues, this.getPhysicsEngine().getPhysicsValues());
             }
 
             try {

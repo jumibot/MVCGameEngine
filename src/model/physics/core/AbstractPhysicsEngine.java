@@ -78,19 +78,6 @@ public abstract class AbstractPhysicsEngine implements PhysicsEngine {
 
         public abstract void setAngularSpeed(double angularSpeed);
 
-        // public void setAngularSpeed(double angularSpeed) {
-        //         PhysicsValuesDTO old = this.getPhysicsValues();
-        //         this.setPhysicsValues(new PhysicsValuesDTO(
-        //                         old.timeStamp,
-        //                         old.posX, old.posY, old.angle,
-        //                         old.size,
-        //                         old.speedX, old.speedY,
-        //                         old.accX, old.accY,
-        //                         angularSpeed,
-        //                         old.angularAcc,
-        //                         old.thrust));
-        // }
-
         public void setPhysicsValues(PhysicsValuesDTO phyValues) {
                 this.phyValues.set(phyValues);
         }

@@ -5,9 +5,9 @@ import java.util.UUID;
 import model.bodies.ports.Body;
 import model.bodies.ports.BodyState;
 import model.bodies.ports.BodyType;
-import model.implementations.Model;
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
+import model.ports.BodyEventProcessor;
 
 /**
  *
@@ -19,9 +19,9 @@ public abstract class AbstractBody implements Body {
     private static volatile int createdQuantity = 0;
     private static volatile int deadQuantity = 0;
 
-    private Model model = null;
+    private final BodyEventProcessor bodyEventProcessor;
     private volatile BodyState state;
-    private final BodyType type;
+    private final BodyType bodyType;
     private final String entityId;
     private final PhysicsEngine phyEngine;
     private final long bornTime = System.nanoTime();
@@ -30,29 +30,21 @@ public abstract class AbstractBody implements Body {
     /**
      * CONSTRUCTORS
      */
-    public AbstractBody(PhysicsEngine phyEngine, BodyType type) {
-        this(phyEngine, -1D, type);
-    }
 
-    public AbstractBody(PhysicsEngine phyEngine, double maxLifeInSeconds, BodyType type) {
-        this.entityId = UUID.randomUUID().toString();
+    public AbstractBody(BodyEventProcessor bodyEventProcessor,
+            PhysicsEngine phyEngine, BodyType bodyType, double maxLifeInSeconds) {
 
+        this.bodyEventProcessor = bodyEventProcessor;
         this.phyEngine = phyEngine;
-        this.state = BodyState.STARTING;
+        this.bodyType = bodyType;
         this.maxLifeInSeconds = maxLifeInSeconds;
-        this.type = type;
+
+        this.entityId = UUID.randomUUID().toString();
+        this.state = BodyState.STARTING;
     }
 
     @Override
     public synchronized void activate() {
-        if (this.model == null) {
-            throw new IllegalArgumentException("Model not setted");
-        }
-
-        if (!this.model.isAlive()) {
-            throw new IllegalArgumentException("Entity activation error due MODEL is not alive!");
-        }
-
         if (this.state != BodyState.STARTING) {
             throw new IllegalArgumentException("Entity activation error due is not starting!");
         }
@@ -97,11 +89,6 @@ public abstract class AbstractBody implements Body {
         return this.maxLifeInSeconds;
     }
 
-    
-    protected Model getModel() {
-        return this.model;
-    }
-
     public PhysicsEngine getPhysicsEngine() {
         return this.phyEngine;
     }
@@ -117,8 +104,8 @@ public abstract class AbstractBody implements Body {
     }
 
     @Override
-    public BodyType getType() {
-        return this.type;
+    public BodyType getBodyType() {
+        return this.bodyType;
     }
 
     @Override
@@ -130,9 +117,8 @@ public abstract class AbstractBody implements Body {
         return this.getLifeInSeconds() >= this.maxLifeInSeconds;
     }
 
-    @Override
-    public void setModel(Model model) {
-        this.model = model;
+    public void processBodyEvents(AbstractBody body, PhysicsValuesDTO newPhyValues, PhysicsValuesDTO oldPhyValues) {
+        this.bodyEventProcessor.processBodyEvents(body, newPhyValues, oldPhyValues);
     }
 
     @Override

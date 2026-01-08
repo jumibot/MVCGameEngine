@@ -1,8 +1,11 @@
 package model.bodies.implementations;
 
+import java.util.List;
+
 import model.bodies.ports.BodyType;
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
+import model.ports.BodyEventProcessor;
 import model.weapons.ports.Weapon;
 import model.weapons.ports.WeaponDto;
 
@@ -11,15 +14,16 @@ public class PlayerBody extends DynamicBody {
     private double maxThrustForce = 80; //
     private double maxAngularAcc = 1000; // degrees*s^-2
     private double angularSpeed = 30; // degrees*s^-1
-    private final java.util.List<Weapon> weapons = new java.util.ArrayList<>(4);
+    private final List<Weapon> weapons = new java.util.ArrayList<>(4);
     private int currentWeaponIndex = -1; // -1 = sin arma
     private double damage = 0D;
     private double energye = 1D;
     private int temperature = 1;
     private double shield = 1D;
 
-    public PlayerBody(PhysicsEngine physicsEngine) {
-        super(physicsEngine, BodyType.PLAYER);
+    public PlayerBody(BodyEventProcessor bodyEventProcessor, PhysicsEngine physicsEngine, double maxLifeInSeconds) {
+
+        super(bodyEventProcessor, physicsEngine, BodyType.PLAYER, maxLifeInSeconds);
     }
 
     public void addWeapon(Weapon weapon) {

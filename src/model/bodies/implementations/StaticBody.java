@@ -5,6 +5,7 @@ import model.bodies.ports.BodyState;
 import model.bodies.ports.BodyType;
 import model.bodies.ports.PhysicsBody;
 import model.physics.implementations.NullPhysicsEngine;
+import model.ports.BodyEventProcessor;
 
 /**
  * StaticBody
@@ -45,8 +46,10 @@ public class StaticBody extends AbstractPhysicsBody {
     /**
      * CONSTRUCTORS
      */
-    public StaticBody(double size, double x, double y, double angle) {
-        super(new NullPhysicsEngine(size, x, y, angle), BodyType.STATIC);
+    public StaticBody(BodyEventProcessor bodyEventProcessor, double size,
+            double x, double y, double angle, long maxLifeInSeconds) {
+                
+        super(bodyEventProcessor, new NullPhysicsEngine(size, x, y, angle), BodyType.STATIC, maxLifeInSeconds);
     }
 
     /**

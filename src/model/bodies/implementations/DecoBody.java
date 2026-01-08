@@ -4,18 +4,15 @@ import model.bodies.core.AbstractBody;
 import model.bodies.ports.BodyState;
 import model.bodies.ports.BodyType;
 import model.physics.implementations.NullPhysicsEngine;
+import model.ports.BodyEventProcessor;
 
 public class DecoBody extends AbstractBody {
 
     /**
      * CONSTRUCTORS
      */
-    public DecoBody(double size, double posX, double posY, double angle) {
-        super(new NullPhysicsEngine(size, posX, posY, angle), BodyType.DECO);
-    }
-
-    public DecoBody(double size, double posX, double posY, double angle, BodyType bodyType) {
-        super(new NullPhysicsEngine(size, posX, posY, angle), bodyType);
+    public DecoBody(BodyEventProcessor bodyEventProcessor, double size, double posX, double posY, double angle, long maxLifeInSeconds) {
+        super(bodyEventProcessor, new NullPhysicsEngine(size, posX, posY, angle), BodyType.DECO, maxLifeInSeconds);
     }
 
     /**

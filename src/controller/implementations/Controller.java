@@ -172,7 +172,7 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
             double angle, double angularSpeed, double angularAcc, double thrust) {
 
         String entityId = this.model.addDynamicBody(size, posX, posY, speedX, speedY,
-                accX, accY, angle, angularSpeed, angularAcc, thrust);
+                accX, accY, angle, angularSpeed, angularAcc, thrust, -1L);
 
         if (entityId == null || entityId.isEmpty()) {
             return; // ======= Max entity quantity reached =======>
@@ -181,7 +181,7 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
     }
 
     public void addDecorator(String assetId, double size, double posX, double posY, double angle) {
-        String entityId = this.model.addDecorator(size, posX, posY, angle);
+        String entityId = this.model.addDecorator(size, posX, posY, angle, -1L);
 
         if (entityId == null || entityId.isEmpty()) {
             return; // ======= Max entity quantity reached =======>
@@ -198,7 +198,7 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
             double angle, double angularSpeed, double angularAcc, double thrust) {
 
         String entityId = this.model.addPlayer(size, posX, posY, speedX, speedY,
-                accX, accY, angle, angularSpeed, angularAcc, thrust);
+                accX, accY, angle, angularSpeed, angularAcc, thrust, -1L);
 
         if (entityId == null) {
             return null; // ======= Max entity quantity reached =======>>
@@ -210,7 +210,7 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
 
     public void addStaticBody(String assetId, double size, double posX, double posY, double angle) {
 
-        String entityId = this.model.addStaticBody(size, posX, posY, angle);
+        String entityId = this.model.addStaticBody(size, posX, posY, angle, -1L);
         ArrayList<BodyDTO> bodiesData = this.model.getStaticsData();
         ArrayList<RenderDTO> renderablesData = RenderableMapper.fromBodyDTO(bodiesData);
 

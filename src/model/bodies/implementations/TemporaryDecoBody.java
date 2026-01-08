@@ -1,18 +1,24 @@
 package model.bodies.implementations;
 
+import model.bodies.core.AbstractBody;
 import model.bodies.ports.BodyState;
 import model.bodies.ports.BodyType;
-import model.ports.ModelState;
+import model.physics.implementations.NullPhysicsEngine;
+import model.ports.BodyEventProcessor;
 
-public class TemporaryDecoBody extends DecoBody implements Runnable {
+public class TemporaryDecoBody extends AbstractBody implements Runnable {
 
     private final long maxLifeInSeconds; // Infinite life by default
 
     /**
      * CONSTRUCTORS
      */
-    public TemporaryDecoBody(double size, double posX, double posY, double angle, long maxLifeInSeconds) {
-        super(size, posX, posY, angle, BodyType.TEMPORARY_DECO);
+    public TemporaryDecoBody(BodyEventProcessor bodyEventProcessor, double size,
+            double posX, double posY, double angle, long maxLifeInSeconds) {
+
+        super(
+                bodyEventProcessor, new NullPhysicsEngine(size, posX, posY, angle),
+                BodyType.TEMPORARY_DECO, maxLifeInSeconds);
 
         this.maxLifeInSeconds = maxLifeInSeconds;
     }
@@ -22,17 +28,14 @@ public class TemporaryDecoBody extends DecoBody implements Runnable {
      */
     @Override
     public synchronized void activate() {
-        super.activate();
         this.setState(BodyState.ALIVE);
     }
 
     @Override
     public void run() {
-        while ((this.getState() != BodyState.DEAD)
-                && (this.getModel().getState() != ModelState.STOPPED)) {
+        while (this.getState() != BodyState.DEAD) {
 
-            if ((this.getState() == BodyState.ALIVE)
-                    && (this.getModel().getState() == ModelState.ALIVE)) {
+            if (this.getState() == BodyState.ALIVE) {
 
                 if ((this.maxLifeInSeconds > 0)
                         && (this.getLifeInSeconds() >= this.maxLifeInSeconds)) {

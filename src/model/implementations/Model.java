@@ -24,6 +24,7 @@ import model.bodies.ports.PhysicsBody;
 import model.bodies.ports.PlayerDTO;
 import model.ports.ActionDTO;
 import model.ports.ActionType;
+import model.ports.BodyEventProcessor;
 import model.ports.Event;
 import model.ports.EventType;
 import model.ports.ModelState;
@@ -114,7 +115,7 @@ import model.weapons.ports.WeaponFactory;
  * - Enable efficient parallel physics updates via per-entity threads
  */
 
-public class Model {
+public class Model implements BodyEventProcessor {
 
     private int maxDBody;
     private Dimension worldDim;
@@ -156,14 +157,6 @@ public class Model {
 
     public String addDynamicBody(double size, double posX, double posY,
             double speedX, double speedY, double accX, double accY,
-            double angle, double angularSpeed, double angularAcc, double thrust) {
-
-        return this.addDynamicBody(size, posX, posY, speedX, speedY, accX, accY, angle, angularSpeed, angularAcc,
-                thrust, -1L);
-    }
-
-    public String addDynamicBody(double size, double posX, double posY,
-            double speedX, double speedY, double accX, double accY,
             double angle, double angularSpeed, double angularAcc, double thrust, double maxLifeInSeconds) {
 
         if (AbstractBody.getAliveQuantity() >= this.maxDBody) {
@@ -173,19 +166,17 @@ public class Model {
         PhysicsValuesDTO phyVals = new PhysicsValuesDTO(nanoTime(), posX, posY, angle, size,
                 speedX, speedY, accX, accY, angularSpeed, angularAcc, thrust);
 
-        DynamicBody dBody = new DynamicBody(new BasicPhysicsEngine(phyVals), maxLifeInSeconds);
+        DynamicBody dBody = new DynamicBody(this, new BasicPhysicsEngine(phyVals), BodyType.DYNAMIC, maxLifeInSeconds);
 
-        dBody.setModel(this);
         dBody.activate();
         this.dynamicBodies.put(dBody.getEntityId(), dBody);
 
         return dBody.getEntityId();
     }
 
-    public String addDecorator(double size, double posX, double posY, double angle) {
-        DecoBody deco = new DecoBody(size, posX, posY, angle);
+    public String addDecorator(double size, double posX, double posY, double angle, long maxLifeInSeconds) {
+        DecoBody deco = new DecoBody(this, size, posX, posY, angle, maxLifeInSeconds);
 
-        deco.setModel(this);
         deco.activate();
         this.decorators.put(deco.getEntityId(), deco);
 
@@ -196,7 +187,7 @@ public class Model {
             double posX, double posY, double speedX, double speedY,
             double accX, double accY,
             double angle, double angularSpeed, double angularAcc,
-            double thrust) {
+            double thrust, long maxLifeInSeconds) {
 
         if (AbstractBody.getAliveQuantity() >= this.maxDBody) {
             return null; // ========= Max vObject quantity reached ==========>
@@ -207,9 +198,8 @@ public class Model {
                 speedX, speedY, accX, accY,
                 angularSpeed, angularAcc, thrust);
 
-        PlayerBody pBody = new PlayerBody(new BasicPhysicsEngine(phyVals));
+        PlayerBody pBody = new PlayerBody(this, new BasicPhysicsEngine(phyVals), maxLifeInSeconds);
 
-        pBody.setModel(this);
         pBody.activate();
         String entityId = pBody.getEntityId();
         this.dynamicBodies.put(entityId, pBody);
@@ -219,11 +209,10 @@ public class Model {
     }
 
     public String addStaticBody(double size,
-            double posX, double posY, double angle) {
+            double posX, double posY, double angle, long maxLifeInSeconds) {
 
-        StaticBody sBody = new StaticBody(size, posX, posY, angle);
+        StaticBody sBody = new StaticBody(this, size, posX, posY, angle, maxLifeInSeconds);
 
-        sBody.setModel(this);
         sBody.activate();
         this.staticBodies.put(sBody.getEntityId(), sBody);
 
@@ -417,7 +406,7 @@ public class Model {
 
     private List<Event> checkCollisions(PhysicsBody checkBody, PhysicsValuesDTO phyValues) {
         List<Event> collisionEvents = new ArrayList<>(4);
-        BodyType checkBodyType = checkBody.getType();
+        BodyType checkBodyType = checkBody.getBodyType();
 
         // ArrayList<VO> vos = this.getVOList();
         // ArrayList<VO> voCollided = new ArrayList<VO>();
@@ -470,7 +459,7 @@ public class Model {
 
         // events.addAll(this.checkCollisions(checkBody, newPhyValues));
 
-        if (checkBody.getType() == BodyType.PLAYER) {
+        if (checkBody.getBodyType() == BodyType.PLAYER) {
             if (((PlayerBody) checkBody).mustFireNow(newPhyValues)) {
                 events.add(new Event(checkBody, null, EventType.MUST_FIRE));
             }
@@ -601,7 +590,7 @@ public class Model {
         ArrayList<BodyDTO> bodyData = new ArrayList<BodyDTO>(bodies.size());
 
         bodies.forEach((entityId, body) -> {
-            BodyDTO bodyInfo = new BodyDTO(entityId, body.getType(), body.getPhysicsValues());
+            BodyDTO bodyInfo = new BodyDTO(entityId, body.getBodyType(), body.getPhysicsValues());
             if (bodyInfo != null) {
                 bodyData.add(bodyInfo);
             }
