@@ -268,7 +268,7 @@ public final class SpatialGrid {
             for (int cy = minCy; cy <= maxCy; cy++) {
                 if (idx >= this.maxCellsPerBody) {
                     System.err.println(
-                            "Warning: computeCellIdxsClamped() overflow for body . maxCellsPerBody="
+                            "Warning: computeCellIdxsClamped() overflow. maxCellsPerBody="
                                     + this.maxCellsPerBody);
                     return idx; // si pasa, sube maxCellsPerBody (p.ej. 9)
                 }
