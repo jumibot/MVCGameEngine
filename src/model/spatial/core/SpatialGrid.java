@@ -257,7 +257,7 @@ public final class SpatialGrid {
         int minCy = (int) (minY / cellSize);
         int maxCy = (int) (maxY / cellSize);
 
-        // Clamp a la topología fija del grid
+        // Clamp to the fixed grid topology
         minCx = this.clamp0Hi(minCx, cellsX - 1);
         maxCx = this.clamp0Hi(maxCx, cellsX - 1);
         minCy = this.clamp0Hi(minCy, cellsY - 1);
@@ -270,7 +270,7 @@ public final class SpatialGrid {
                     System.err.println(
                             "Warning: computeCellIdxsClamped() overflow. maxCellsPerBody="
                                     + this.maxCellsPerBody);
-                    return idx; // si pasa, sube maxCellsPerBody (p.ej. 9)
+                    return idx; // if this happens, increase maxCellsPerBody (e.g. 9)
                 }
 
                 outIdxs[idx++] = cellIdx(cx, cy);

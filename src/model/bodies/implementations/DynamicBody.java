@@ -89,8 +89,7 @@ public class DynamicBody extends AbstractPhysicsBody implements Runnable {
 
             if (this.getState() == BodyState.ALIVE) {
                 newPhyValues = this.getPhysicsEngine().calcNewPhysicsValues();
-                
-                // Si tu grid usa AABB:
+
                 double r = newPhyValues.size * 0.5;
                 double minX = newPhyValues.posX - r;
                 double maxX = newPhyValues.posX + r;
@@ -98,9 +97,8 @@ public class DynamicBody extends AbstractPhysicsBody implements Runnable {
                 double maxY = newPhyValues.posY + r;
 
                 this.getSpatialGrid().upsert(
-                    this.getEntityId(), minX, maxX, minY, maxY, this.getScratchIdxs());
+                        this.getEntityId(), minX, maxX, minY, maxY, this.getScratchIdxs());
 
-                // (si tu upsert aún recibe PhysicsValuesDTO, pásale newPhyValues y scratchIdxs)
                 this.processBodyEvents(this, newPhyValues, this.getPhysicsEngine().getPhysicsValues());
             }
 

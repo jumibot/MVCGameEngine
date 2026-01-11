@@ -175,7 +175,7 @@ public class Model implements BodyEventProcessor {
                 speedX, speedY, accX, accY, angularSpeed, angularAcc, thrust);
 
         DynamicBody dBody = new DynamicBody(
-            this, this.spatialGrid, new BasicPhysicsEngine(phyVals), BodyType.DYNAMIC, maxLifeInSeconds);
+                this, this.spatialGrid, new BasicPhysicsEngine(phyVals), BodyType.DYNAMIC, maxLifeInSeconds);
 
         dBody.activate();
         this.dynamicBodies.put(dBody.getEntityId(), dBody);
@@ -208,7 +208,7 @@ public class Model implements BodyEventProcessor {
                 angularSpeed, angularAcc, thrust);
 
         PlayerBody pBody = new PlayerBody(
-            this, this.spatialGrid, new BasicPhysicsEngine(phyVals), maxLifeInSeconds);
+                this, this.spatialGrid, new BasicPhysicsEngine(phyVals), maxLifeInSeconds);
 
         pBody.activate();
         String entityId = pBody.getEntityId();
@@ -468,7 +468,7 @@ public class Model implements BodyEventProcessor {
 
         List<Event> events = this.checkLimitEvents(checkBody, newPhyValues);
 
-        // events.addAll(this.checkCollisions(checkBody, newPhyValues));
+        events.addAll(this.checkCollisions(checkBody, newPhyValues));
 
         if (checkBody.getBodyType() == BodyType.PLAYER) {
             if (((PlayerBody) checkBody).mustFireNow(newPhyValues)) {

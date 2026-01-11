@@ -39,12 +39,10 @@ public abstract class AbstractBody implements Body {
      * CONSTRUCTORS
      */
 
-    public AbstractBody(BodyEventProcessor bodyEventProcessor, SpatialGrid spatialGrid, 
-            PhysicsEngine phyEngine, BodyType bodyType, 
+    public AbstractBody(BodyEventProcessor bodyEventProcessor, SpatialGrid spatialGrid,
+            PhysicsEngine phyEngine, BodyType bodyType,
             double maxLifeInSeconds) {
 
-        this.entityId = UUID.randomUUID().toString();
-        this.state = BodyState.STARTING;
         this.bodyEventProcessor = bodyEventProcessor;
         this.phyEngine = phyEngine;
         this.bodyType = bodyType;
@@ -54,6 +52,8 @@ public abstract class AbstractBody implements Body {
         this.scratchIdxs = new int[spatialGrid.getMaxCellsPerBody()];
         this.collisionCandidates = new ArrayList<>(32);
 
+        this.entityId = UUID.randomUUID().toString();
+        this.state = BodyState.STARTING;
     }
 
     @Override
