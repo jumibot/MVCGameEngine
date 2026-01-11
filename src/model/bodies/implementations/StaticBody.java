@@ -6,6 +6,7 @@ import model.bodies.ports.BodyState;
 import model.bodies.ports.BodyType;
 import model.bodies.ports.PhysicsBody;
 import model.physics.implementations.NullPhysicsEngine;
+import model.spatial.core.SpatialGrid;
 
 /**
  * StaticBody
@@ -46,10 +47,16 @@ public class StaticBody extends AbstractPhysicsBody {
     /**
      * CONSTRUCTORS
      */
-    public StaticBody(BodyEventProcessor bodyEventProcessor, double size,
-            double x, double y, double angle, long maxLifeInSeconds) {
-                
-        super(bodyEventProcessor, new NullPhysicsEngine(size, x, y, angle), BodyType.STATIC, maxLifeInSeconds);
+    public StaticBody(
+            BodyEventProcessor bodyEventProcessor, SpatialGrid spatialGrid,
+            double size, double x, double y, double angle, 
+            long maxLifeInSeconds) {
+
+        super(
+            bodyEventProcessor, spatialGrid, 
+            new NullPhysicsEngine(size, x, y, angle), 
+            BodyType.STATIC, 
+            maxLifeInSeconds);
     }
 
     /**

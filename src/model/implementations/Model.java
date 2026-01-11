@@ -28,6 +28,8 @@ import model.ports.DomainEventProcessor;
 import model.ports.Event;
 import model.ports.EventType;
 import model.ports.ModelState;
+import model.spatial.core.SpatialGrid;
+import model.spatial.ports.SpatialGridStatisticsDTO;
 import model.weapons.ports.Weapon;
 import model.weapons.ports.WeaponDto;
 import model.weapons.ports.WeaponFactory;
@@ -117,13 +119,15 @@ import model.weapons.ports.WeaponFactory;
 
 public class Model implements BodyEventProcessor {
 
-    private int maxDBody;
-    private Dimension worldDim;
+    private int maxDynamicBodies;
 
     private DomainEventProcessor domainEventProcessor = null;
     private volatile ModelState state = ModelState.STARTING;
 
     private static final int MAX_ENTITIES = 5000;
+    private final double worldWidth;
+    private final double worldHeight;
+    private final SpatialGrid spatialGrid;
     private final Map<String, Body> dynamicBodies = new ConcurrentHashMap<>(MAX_ENTITIES);
     private final Map<String, Body> decorators = new ConcurrentHashMap<>(100);
     private final Map<String, Body> gravityBodies = new ConcurrentHashMap<>(50);
@@ -133,8 +137,19 @@ public class Model implements BodyEventProcessor {
     /**
      * CONSTRUCTORS
      */
-    public Model() {
+    public Model(double worldWidth, double worldHeight, int maxDynamicBodies) {
+        if (worldWidth <= 0 || worldHeight <= 0) {
+            throw new IllegalArgumentException("Invalid world dimension");
+        }
 
+        if (maxDynamicBodies <= 0) {
+            throw new IllegalArgumentException("Max dynamic bodies not set");
+        }
+
+        this.worldWidth = worldWidth;
+        this.worldHeight = worldHeight;
+        this.maxDynamicBodies = maxDynamicBodies;
+        this.spatialGrid = new SpatialGrid(64, (int) worldWidth, (int) worldHeight, 16);
     }
 
     /**
@@ -145,13 +160,6 @@ public class Model implements BodyEventProcessor {
             throw new IllegalArgumentException("Controller is not set");
         }
 
-        if (this.worldDim == null) {
-            throw new IllegalArgumentException("Null world dimension");
-        }
-
-        if (this.maxDBody <= 0) {
-            throw new IllegalArgumentException("Max visual objects not set");
-        }
         this.state = ModelState.ALIVE;
     }
 
@@ -159,14 +167,15 @@ public class Model implements BodyEventProcessor {
             double speedX, double speedY, double accX, double accY,
             double angle, double angularSpeed, double angularAcc, double thrust, double maxLifeInSeconds) {
 
-        if (AbstractBody.getAliveQuantity() >= this.maxDBody) {
+        if (AbstractBody.getAliveQuantity() >= this.maxDynamicBodies) {
             return null; // ========= Max vObject quantity reached ==========>>
         }
 
         PhysicsValuesDTO phyVals = new PhysicsValuesDTO(nanoTime(), posX, posY, angle, size,
                 speedX, speedY, accX, accY, angularSpeed, angularAcc, thrust);
 
-        DynamicBody dBody = new DynamicBody(this, new BasicPhysicsEngine(phyVals), BodyType.DYNAMIC, maxLifeInSeconds);
+        DynamicBody dBody = new DynamicBody(
+            this, this.spatialGrid, new BasicPhysicsEngine(phyVals), BodyType.DYNAMIC, maxLifeInSeconds);
 
         dBody.activate();
         this.dynamicBodies.put(dBody.getEntityId(), dBody);
@@ -175,7 +184,7 @@ public class Model implements BodyEventProcessor {
     }
 
     public String addDecorator(double size, double posX, double posY, double angle, long maxLifeInSeconds) {
-        DecoBody deco = new DecoBody(this, size, posX, posY, angle, maxLifeInSeconds);
+        DecoBody deco = new DecoBody(this, this.spatialGrid, size, posX, posY, angle, maxLifeInSeconds);
 
         deco.activate();
         this.decorators.put(deco.getEntityId(), deco);
@@ -189,7 +198,7 @@ public class Model implements BodyEventProcessor {
             double angle, double angularSpeed, double angularAcc,
             double thrust, long maxLifeInSeconds) {
 
-        if (AbstractBody.getAliveQuantity() >= this.maxDBody) {
+        if (AbstractBody.getAliveQuantity() >= this.maxDynamicBodies) {
             return null; // ========= Max vObject quantity reached ==========>
         }
 
@@ -198,7 +207,8 @@ public class Model implements BodyEventProcessor {
                 speedX, speedY, accX, accY,
                 angularSpeed, angularAcc, thrust);
 
-        PlayerBody pBody = new PlayerBody(this, new BasicPhysicsEngine(phyVals), maxLifeInSeconds);
+        PlayerBody pBody = new PlayerBody(
+            this, this.spatialGrid, new BasicPhysicsEngine(phyVals), maxLifeInSeconds);
 
         pBody.activate();
         String entityId = pBody.getEntityId();
@@ -211,7 +221,7 @@ public class Model implements BodyEventProcessor {
     public String addStaticBody(double size,
             double posX, double posY, double angle, long maxLifeInSeconds) {
 
-        StaticBody sBody = new StaticBody(this, size, posX, posY, angle, maxLifeInSeconds);
+        StaticBody sBody = new StaticBody(this, this.spatialGrid, size, posX, posY, angle, maxLifeInSeconds);
 
         sBody.activate();
         this.staticBodies.put(sBody.getEntityId(), sBody);
@@ -232,8 +242,8 @@ public class Model implements BodyEventProcessor {
         pBody.addWeapon(weapon);
     }
 
-    public int getMaxDBody() {
-        return this.maxDBody;
+    public int getMaxDynamicBodies() {
+        return this.maxDynamicBodies;
     }
 
     public ArrayList<BodyDTO> getDynamicsData() {
@@ -288,8 +298,12 @@ public class Model implements BodyEventProcessor {
         return playerData;
     }
 
+    public SpatialGridStatisticsDTO getSpatialGridStatistics() {
+        return this.spatialGrid.getStatistics();
+    }
+
     public Dimension getWorldDimension() {
-        return this.worldDim;
+        return new Dimension((int) this.worldWidth, (int) this.worldHeight);
     }
 
     public boolean isAlive() {
@@ -298,6 +312,7 @@ public class Model implements BodyEventProcessor {
 
     public void killDynamicBody(Body body) {
         body.die();
+        this.spatialGrid.remove(body.getEntityId());
         this.dynamicBodies.remove(body.getEntityId());
     }
 
@@ -392,12 +407,8 @@ public class Model implements BodyEventProcessor {
         this.domainEventProcessor = domainEventProcessor;
     }
 
-    public void setDimension(Dimension worldDim) {
-        this.worldDim = worldDim;
-    }
-
-    public void setMaxDBody(int maxDynamicBody) {
-        this.maxDBody = maxDynamicBody;
+    public void setMaxDynamicBodies(int maxDynamicBody) {
+        this.maxDynamicBodies = maxDynamicBody;
     }
 
     /**
@@ -437,7 +448,7 @@ public class Model implements BodyEventProcessor {
             limitEvents.add(new Event(body, null, EventType.REACHED_EAST_LIMIT));
         }
 
-        if (phyValues.posX >= this.worldDim.width) {
+        if (phyValues.posX >= this.worldWidth) {
             limitEvents.add(new Event(body, null, EventType.REACHED_WEST_LIMIT));
         }
 
@@ -445,7 +456,7 @@ public class Model implements BodyEventProcessor {
             limitEvents.add(new Event(body, null, EventType.REACHED_NORTH_LIMIT));
         }
 
-        if (phyValues.posY >= this.worldDim.height) {
+        if (phyValues.posY >= this.worldHeight) {
             limitEvents.add(new Event(body, null, EventType.REACHED_SOUTH_LIMIT));
         }
 
@@ -535,22 +546,22 @@ public class Model implements BodyEventProcessor {
 
             case REBOUND_IN_EAST:
                 body.reboundInEast(newPhyValues, oldPhyValues,
-                        this.worldDim.width, this.worldDim.height);
+                        this.worldWidth, this.worldHeight);
                 break;
 
             case REBOUND_IN_WEST:
                 body.reboundInWest(newPhyValues, oldPhyValues,
-                        this.worldDim.width, this.worldDim.height);
+                        this.worldWidth, this.worldHeight);
                 break;
 
             case REBOUND_IN_NORTH:
                 body.reboundInNorth(newPhyValues, oldPhyValues,
-                        this.worldDim.width, this.worldDim.height);
+                        this.worldWidth, this.worldHeight);
                 break;
 
             case REBOUND_IN_SOUTH:
                 body.reboundInSouth(newPhyValues, oldPhyValues,
-                        this.worldDim.width, this.worldDim.height);
+                        this.worldWidth, this.worldHeight);
                 break;
 
             case DIE:

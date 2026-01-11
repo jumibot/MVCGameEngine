@@ -19,6 +19,7 @@ import controller.ports.EngineState;
 import view.renderables.ports.DynamicRenderDTO;
 import view.renderables.ports.PlayerRenderDTO;
 import view.renderables.ports.RenderDTO;
+import view.renderables.ports.SpatialGridStatisticsRenderDTO;
 
 /**
  * View
@@ -208,6 +209,10 @@ public class View extends JFrame implements KeyListener {
         }
 
         return this.controller.getPlayerRenderData(this.localPlayerId);
+    }
+
+    protected SpatialGridStatisticsRenderDTO getSpatialGridStatistics() {
+        return this.controller.getSpatialGridStatistics();
     }
 
     /**

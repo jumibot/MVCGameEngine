@@ -16,13 +16,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import images.Images;
 import images.ImageCache;
-import view.huds.implementations.PlayerHud;
-import view.huds.implementations.SystemHud;
+import view.huds.implementations.PlayerHUD;
+import view.huds.implementations.SpatialGridHUD;
+import view.huds.implementations.SystemHUD;
 import view.renderables.implementations.DynamicRenderable;
 import view.renderables.implementations.Renderable;
 import view.renderables.ports.DynamicRenderDTO;
 import view.renderables.ports.PlayerRenderDTO;
 import view.renderables.ports.RenderDTO;
+import view.renderables.ports.SpatialGridStatisticsRenderDTO;
 import controller.ports.EngineState;
 
 /**
@@ -123,7 +125,7 @@ public class Renderer extends Canvas implements Runnable {
 
     private Dimension viewDimension;
     private View view;
-    private int delayInMillis = 1;
+    private int delayInMillis = 0;
     private long currentFrame = 0;
     private Thread thread;
 
@@ -131,8 +133,9 @@ public class Renderer extends Canvas implements Runnable {
     private Images images;
     private ImageCache imagesCache;
     private VolatileImage viBackground;
-    private final PlayerHud playerHud = new PlayerHud();
-    private final SystemHud systemHud = new SystemHud();
+    private final PlayerHUD playerHUD = new PlayerHUD();
+    private final SystemHUD systemHUD = new SystemHUD();
+    private final SpatialGridHUD spatialGridHUD = new SpatialGridHUD();
 
     private final Map<String, DynamicRenderable> dynamicRenderables = new ConcurrentHashMap<>();
     private volatile Map<String, Renderable> staticRenderables = new ConcurrentHashMap<>();
@@ -275,9 +278,9 @@ public class Renderer extends Canvas implements Runnable {
         }
     }
 
-    private void drawHUD(Graphics2D g) {
+    private void drawHUDs(Graphics2D g) {
 
-        this.systemHud.draw(g,
+        this.systemHUD.draw(g,
                 this.fps,
                 String.format("%.0f", this.renderTimeInMs) + " ms",
                 this.imagesCache.size(),
@@ -287,18 +290,12 @@ public class Renderer extends Canvas implements Runnable {
 
         PlayerRenderDTO playerData = this.view.getLocalPlayerRenderData();
         if (playerData != null) {
-            // if (playerData.activeWeapon==1)
-            // this.playerHud.
+            this.playerHUD.draw(g, playerData.toObjectArray());
+        }
 
-            this.playerHud.draw(g,
-                    playerData.damage,
-                    playerData.energy,
-                    playerData.shield,
-                    playerData.temperature,
-                    playerData.primaryAmmoStatus,
-                    playerData.secondaryAmmoStatus,
-                    playerData.minesStatus,
-                    playerData.missilesStatus);
+        SpatialGridStatisticsRenderDTO spatialGridStats = this.view.getSpatialGridStatistics();
+        if (spatialGridStats != null) {
+            this.spatialGridHUD.draw(g, spatialGridStats.toObjectArray());
         }
     }
 
@@ -321,7 +318,7 @@ public class Renderer extends Canvas implements Runnable {
 
                 gg.setComposite(AlphaComposite.SrcOver); // With transparency
                 this.drawStaticRenderables(gg);
-                this.drawHUD(gg);
+                this.drawHUDs(gg);
 
                 this.drawDynamicRenderable(gg);
 

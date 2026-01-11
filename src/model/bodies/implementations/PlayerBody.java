@@ -6,6 +6,7 @@ import model.bodies.ports.BodyEventProcessor;
 import model.bodies.ports.BodyType;
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
+import model.spatial.core.SpatialGrid;
 import model.weapons.ports.Weapon;
 import model.weapons.ports.WeaponDto;
 
@@ -21,9 +22,14 @@ public class PlayerBody extends DynamicBody {
     private int temperature = 1;
     private double shield = 1D;
 
-    public PlayerBody(BodyEventProcessor bodyEventProcessor, PhysicsEngine physicsEngine, double maxLifeInSeconds) {
+    public PlayerBody(BodyEventProcessor bodyEventProcessor, SpatialGrid spatialGrid,
+            PhysicsEngine physicsEngine,
+            double maxLifeInSeconds) {
 
-        super(bodyEventProcessor, physicsEngine, BodyType.PLAYER, maxLifeInSeconds);
+        super(bodyEventProcessor, spatialGrid,
+                physicsEngine,
+                BodyType.PLAYER,
+                maxLifeInSeconds);
     }
 
     public void addWeapon(Weapon weapon) {

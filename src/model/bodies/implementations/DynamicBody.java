@@ -3,6 +3,7 @@ package model.bodies.implementations;
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
 import model.ports.ModelState;
+import model.spatial.core.SpatialGrid;
 import model.bodies.core.AbstractPhysicsBody;
 import model.bodies.ports.BodyEventProcessor;
 import model.bodies.ports.BodyState;
@@ -49,10 +50,13 @@ public class DynamicBody extends AbstractPhysicsBody implements Runnable {
     /**
      * CONSTRUCTORS
      */
-    public DynamicBody(BodyEventProcessor bodyEventProcessor, 
-        PhysicsEngine phyEngine, BodyType bodyType, double maxLifeInSeconds) {
-            
-        super(bodyEventProcessor, phyEngine, bodyType, maxLifeInSeconds);
+    public DynamicBody(BodyEventProcessor bodyEventProcessor, SpatialGrid spatialGrid,
+            PhysicsEngine phyEngine, BodyType bodyType, double maxLifeInSeconds) {
+
+        super(bodyEventProcessor, spatialGrid,
+                phyEngine,
+                bodyType,
+                maxLifeInSeconds);
     }
 
     /**
@@ -85,6 +89,18 @@ public class DynamicBody extends AbstractPhysicsBody implements Runnable {
 
             if (this.getState() == BodyState.ALIVE) {
                 newPhyValues = this.getPhysicsEngine().calcNewPhysicsValues();
+                
+                // Si tu grid usa AABB:
+                double r = newPhyValues.size * 0.5;
+                double minX = newPhyValues.posX - r;
+                double maxX = newPhyValues.posX + r;
+                double minY = newPhyValues.posY - r;
+                double maxY = newPhyValues.posY + r;
+
+                this.getSpatialGrid().upsert(
+                    this.getEntityId(), minX, maxX, minY, maxY, this.getScratchIdxs());
+
+                // (si tu upsert aún recibe PhysicsValuesDTO, pásale newPhyValues y scratchIdxs)
                 this.processBodyEvents(this, newPhyValues, this.getPhysicsEngine().getPhysicsValues());
             }
 

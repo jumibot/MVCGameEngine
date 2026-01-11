@@ -18,6 +18,14 @@ public class Main {
                 System.setProperty("sun.java2d.uiScale", "1.0");
                 int worldWidth = 2450;
                 int worldHeight = 1450;
+                int maxDynamicBodies = 5000;
+                int maxAsteroidCreationDelay = 1000;
+                int minAsteroidSize = 8;
+                int maxAsteroidSize = 16;
+                int maxAsteroidMass = 1000;
+                int minAsteroidMass = 10;
+                int maxAsteroidSpeedModule = 175;
+                int maxAsteroidAccModule = 0;
 
                 ProjectAssets projectAssets = new ProjectAssets();
 
@@ -28,23 +36,25 @@ public class Main {
 
                 Controller controller = new Controller(
                                 worldWidth, worldHeight, // World dimensions
-                                3500, // Max dynamic bodies
-                                new View(), new Model(),
+                                new View(), 
+                                new Model(worldWidth, worldHeight, maxDynamicBodies),
                                 worldDef.gameAssets);
 
                 controller.activate();
 
                 SceneGenerator worldGenerator = new SceneGenerator(controller, worldDef);
 
+
                 LifeConfigDTO lifeConfig = new LifeConfigDTO(
-                                10000, // maxCreationDelay
-                                54, 54, // maxSize, minSize
-                                1000, 10, // maxMass, minMass
-                                175, // maxSpeedModule
-                                0); // maxAccModule
+                                maxAsteroidCreationDelay, // maxCreationDelay
+                                maxAsteroidSize, 
+                                minAsteroidSize, // maxSize, minSize
+                                maxAsteroidMass, 
+                                minAsteroidMass, // maxMass, minMass
+                                maxAsteroidSpeedModule, // maxSpeedModule
+                                maxAsteroidAccModule); // maxAccModule
 
                 LifeGenerator lifeGenerator = new LifeGenerator(controller, worldDef, lifeConfig);
-
                 lifeGenerator.activate();
         }
 }

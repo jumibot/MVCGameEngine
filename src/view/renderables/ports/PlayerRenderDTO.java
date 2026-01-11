@@ -38,4 +38,20 @@ public class PlayerRenderDTO {
         this.minesStatus = minesStatus;
         this.missilesStatus = missilesStatus;
     }
+
+    public Object[] toObjectArray() {
+        return new Object[] {
+                this.entityId,
+                this.playerName,
+                this.damage,
+                this.energy,
+                this.shield,
+                this.temperature,
+                this.activeWeapon,
+                this.primaryAmmoStatus,
+                this.secondaryAmmoStatus,
+                this.minesStatus,
+                this.missilesStatus
+        };
+    }
 }

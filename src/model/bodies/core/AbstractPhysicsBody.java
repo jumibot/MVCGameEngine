@@ -5,11 +5,15 @@ import model.bodies.ports.BodyType;
 import model.bodies.ports.PhysicsBody;
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
+import model.spatial.core.SpatialGrid;
 
 public class AbstractPhysicsBody extends AbstractBody implements PhysicsBody {
 
-    public AbstractPhysicsBody(BodyEventProcessor bodyEventProcessor, PhysicsEngine phyEngine, BodyType bodyType, double maxLifeInSeconds) {
-        super(bodyEventProcessor, phyEngine, bodyType, maxLifeInSeconds);
+    public AbstractPhysicsBody(
+        BodyEventProcessor bodyEventProcessor, SpatialGrid spatialGrid,
+        PhysicsEngine phyEngine, BodyType bodyType, double maxLifeInSeconds) {
+            
+        super(bodyEventProcessor, spatialGrid, phyEngine, bodyType, maxLifeInSeconds);
     }
 
     public PhysicsValuesDTO getPhysicsValues() {

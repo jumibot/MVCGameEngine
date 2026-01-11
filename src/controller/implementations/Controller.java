@@ -5,14 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import assets.core.AssetCatalog;
+
 import controller.mappers.DynamicRenderableMapper;
 import controller.mappers.PlayerRenderableMapper;
 import controller.mappers.RenderableMapper;
+import controller.mappers.SpatialGridStatisticsMapper;
 import controller.mappers.WeaponMapper;
-
 import controller.ports.EngineState;
 import controller.ports.WorldEvolver;
 import controller.ports.WorldInitializer;
+
 import model.bodies.ports.BodyDTO;
 import model.implementations.Model;
 import model.weapons.ports.WeaponDto;
@@ -23,12 +25,12 @@ import model.ports.ActionType;
 import model.ports.DomainEventProcessor;
 import model.ports.Event;
 import model.ports.EventType;
-import model.ports.DomainEventProcessor;
-
+import model.spatial.ports.SpatialGridStatisticsDTO;
 import view.core.View;
 import view.renderables.ports.DynamicRenderDTO;
 import view.renderables.ports.PlayerRenderDTO;
 import view.renderables.ports.RenderDTO;
+import view.renderables.ports.SpatialGridStatisticsRenderDTO;
 import world.ports.WorldDefWeaponDTO;
 
 /**
@@ -121,20 +123,16 @@ import world.ports.WorldDefWeaponDTO;
 public class Controller implements WorldEvolver, WorldInitializer, DomainEventProcessor {
 
     private volatile EngineState engineState;
-    private int maxEntities;
     private Model model;
     private View view;
     private Dimension worldDimension;
 
-    public Controller(int worldWidth, int worldHigh, int maxDBodies,
+    public Controller(int worldWidth, int worldHigh,
             View view, Model model, AssetCatalog assets) {
 
         this.engineState = EngineState.STARTING;
         this.setWorldDimension(worldWidth, worldHigh);
-        this.setMaxEntities(maxDBodies);
-
         this.setModel(model);
-
         this.setView(view);
         this.view.loadAssets(assets);
     }
@@ -147,10 +145,6 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
             throw new IllegalArgumentException("Null world dimension");
         }
 
-        if (this.maxEntities <= 0) {
-            throw new IllegalArgumentException("Max visual objects not setted");
-        }
-
         if (this.view == null) {
             throw new IllegalArgumentException("No view injected");
         }
@@ -161,11 +155,7 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
 
         this.view.setDimension(this.worldDimension);
         this.view.activate();
-
-        this.model.setDimension(this.worldDimension);
-        this.model.setMaxDBody(this.maxEntities);
         this.model.activate();
-
         this.engineState = EngineState.ALIVE;
     }
 
@@ -287,16 +277,18 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
         return this.model.getDeadQuantity();
     }
 
-    public int getMaxEntities() {
-        return this.maxEntities;
-    }
-
     public Dimension getWorldDimension() {
         return this.worldDimension;
     }
 
     public PlayerRenderDTO getPlayerRenderData(String playerId) {
         return PlayerRenderableMapper.fromPlayerDTO(this.model.getPlayerData(playerId));
+    }
+
+    public SpatialGridStatisticsRenderDTO getSpatialGridStatistics() {
+        return SpatialGridStatisticsMapper.fromSpatialGridStatisticsDTO(
+                
+            this.model.getSpatialGridStatistics());
     }
 
     public void loadAssets(AssetCatalog assets) {
@@ -355,10 +347,6 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
 
     public void setWorldDimension(int width, int height) {
         this.worldDimension = new Dimension(width, height);
-    }
-
-    public void setMaxEntities(int maxEntities) {
-        this.maxEntities = maxEntities;
     }
 
     /**

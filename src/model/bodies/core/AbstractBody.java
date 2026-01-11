@@ -1,5 +1,6 @@
 package model.bodies.core;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import model.bodies.ports.Body;
@@ -8,6 +9,7 @@ import model.bodies.ports.BodyState;
 import model.bodies.ports.BodyType;
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
+import model.spatial.core.SpatialGrid;
 
 /**
  *
@@ -27,20 +29,31 @@ public abstract class AbstractBody implements Body {
     private final long bornTime = System.nanoTime();
     private final double maxLifeInSeconds; // Infinite life by default
 
+    // Buffers for collision detection and avoiding garbage creation during the
+    // physics update. ==> Zero allocation strategy
+    private final SpatialGrid spatialGrid;
+    private final int[] scratchIdxs;
+    private final ArrayList<String> collisionCandidates;
+
     /**
      * CONSTRUCTORS
      */
 
-    public AbstractBody(BodyEventProcessor bodyEventProcessor,
-            PhysicsEngine phyEngine, BodyType bodyType, double maxLifeInSeconds) {
+    public AbstractBody(BodyEventProcessor bodyEventProcessor, SpatialGrid spatialGrid, 
+            PhysicsEngine phyEngine, BodyType bodyType, 
+            double maxLifeInSeconds) {
 
+        this.entityId = UUID.randomUUID().toString();
+        this.state = BodyState.STARTING;
         this.bodyEventProcessor = bodyEventProcessor;
         this.phyEngine = phyEngine;
         this.bodyType = bodyType;
         this.maxLifeInSeconds = maxLifeInSeconds;
 
-        this.entityId = UUID.randomUUID().toString();
-        this.state = BodyState.STARTING;
+        this.spatialGrid = spatialGrid;
+        this.scratchIdxs = new int[spatialGrid.getMaxCellsPerBody()];
+        this.collisionCandidates = new ArrayList<>(32);
+
     }
 
     @Override
@@ -96,6 +109,16 @@ public abstract class AbstractBody implements Body {
     @Override
     public PhysicsValuesDTO getPhysicsValues() {
         return this.phyEngine.getPhysicsValues();
+    }
+
+    @Override
+    public int[] getScratchIdxs() {
+        return this.scratchIdxs;
+    }
+
+    @Override
+    public SpatialGrid getSpatialGrid() {
+        return this.spatialGrid;
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Hud {
+public class DataHUD {
     public final int initRow;
     public final int initCol;
     public final int interline;
@@ -21,7 +21,8 @@ public class Hud {
     public final List<Item> items = new ArrayList<>(20);
     public int valuesExpected = 0;
 
-    public Hud(Color titleColor, Color highLightColor, Color labelColor, Color dataColor, int initRow, int initCol, int interline) {
+    public DataHUD(Color titleColor, Color highLightColor, Color labelColor, Color dataColor, int initRow, int initCol,
+            int interline) {
         this.initRow = initRow;
         this.initCol = initCol;
         this.interline = interline;
@@ -51,6 +52,10 @@ public class Hud {
         this.addItem(new BarItem(label, this.labelColor, this.dataColor, barWidth, showPercentage));
     }
 
+    public void addSkipValue() {
+        this.addItem(new SkipItem());
+    }
+
     public void draw(Graphics2D g, Object... values) {
         if (values.length != this.valuesExpected) {
             throw new IllegalArgumentException(
@@ -58,20 +63,19 @@ public class Hud {
         }
 
         g.setFont(this.font);
-
         final FontMetrics fm = g.getFontMetrics();
         int valueIndex = 0;
+        int row = 0;
         Object value = null;
-        for (int i = 0; i < this.items.size(); i++) {
-
-            int posX = this.initCol;
-            int posY = this.initRow + i * this.interline;
-            if (this.items.get(i).isValueExpected()) {
+        for (Item item : this.items) {
+            if (item.isValueExpected()) {
                 value = values[valueIndex];
                 valueIndex++;
             }
 
-            items.get(i).draw(g, fm, posX, posY, value);
+            int posY = this.initRow + row * this.interline;
+            item.draw(g, fm, this.initCol, posY, value);
+            row = (item instanceof SkipItem) ? row : row + 1;
         }
     }
 
