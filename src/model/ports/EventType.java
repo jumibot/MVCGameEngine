@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 
 public enum EventType implements Serializable {
-    COLLIDED,
+    COLLISIONED,
     MUST_FIRE,
     NONE,
     REACHED_NORTH_LIMIT,

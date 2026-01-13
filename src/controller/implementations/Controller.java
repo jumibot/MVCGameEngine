@@ -16,6 +16,7 @@ import controller.ports.WorldEvolver;
 import controller.ports.WorldInitializer;
 
 import model.bodies.ports.BodyDTO;
+import model.bodies.ports.BodyType;
 import model.implementations.Model;
 import model.weapons.ports.WeaponDto;
 import model.ports.ActionDTO;
@@ -25,7 +26,6 @@ import model.ports.ActionType;
 import model.ports.DomainEventProcessor;
 import model.ports.Event;
 import model.ports.EventType;
-import model.spatial.ports.SpatialGridStatisticsDTO;
 import view.core.View;
 import view.renderables.ports.DynamicRenderDTO;
 import view.renderables.ports.PlayerRenderDTO;
@@ -233,10 +233,10 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
             }
         }
 
-        if (!containsDeathLikeAction(actions)) {
-            actions.add(new ActionDTO(
-                    ActionType.MOVE, ActionExecutor.PHYSICS_BODY, ActionPriority.NORMAL));
-        }
+        // if (!containsDeathLikeAction(actions)) {
+        // actions.add(new ActionDTO(
+        // ActionType.MOVE, ActionExecutor.PHYSICS_BODY, ActionPriority.NORMAL));
+        // }
 
         return actions;
     }
@@ -287,8 +287,8 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
 
     public SpatialGridStatisticsRenderDTO getSpatialGridStatistics() {
         return SpatialGridStatisticsMapper.fromSpatialGridStatisticsDTO(
-                
-            this.model.getSpatialGridStatistics());
+
+                this.model.getSpatialGridStatistics());
     }
 
     public void loadAssets(AssetCatalog assets) {
@@ -353,28 +353,43 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
      * PRIVATE
      */
     private List<ActionDTO> applyGameRules(Event event) {
-        List<ActionDTO> actions = new ArrayList<>(2);
+        List<ActionDTO> actions = new ArrayList<>(8);
 
         switch (event.eventType) {
             case REACHED_NORTH_LIMIT:
+                actions.add(new ActionDTO(event.entityIdPrimaryBody,
+                        ActionType.REBOUND_IN_NORTH, ActionExecutor.PHYSICS_BODY, ActionPriority.HIGH));
+                break;
+
             case REACHED_SOUTH_LIMIT:
+                actions.add(new ActionDTO(event.entityIdPrimaryBody,
+                        ActionType.REBOUND_IN_SOUTH, ActionExecutor.PHYSICS_BODY, ActionPriority.HIGH));
+                break;
+
             case REACHED_EAST_LIMIT:
+                actions.add(new ActionDTO(event.entityIdPrimaryBody,
+                        ActionType.REBOUND_IN_EAST, ActionExecutor.PHYSICS_BODY, ActionPriority.HIGH));
+                break;
+
             case REACHED_WEST_LIMIT:
-                actions.add(new ActionDTO(
-                        ActionType.DIE, ActionExecutor.MODEL, ActionPriority.HIGH));
+                actions.add(new ActionDTO(event.entityIdPrimaryBody,
+                        ActionType.REBOUND_IN_WEST, ActionExecutor.PHYSICS_BODY, ActionPriority.HIGH));
                 break;
 
             case MUST_FIRE:
-                actions.add(new ActionDTO(
-                        ActionType.FIRE, ActionExecutor.MODEL, ActionPriority.HIGH));
+                actions.add(new ActionDTO(event.entityIdPrimaryBody,
+                        ActionType.FIRE, ActionExecutor.MODEL, ActionPriority.LOW));
                 break;
 
             case LIFE_OVER:
-                actions.add(new ActionDTO(
+                actions.add(new ActionDTO(event.entityIdPrimaryBody,
                         ActionType.DIE, ActionExecutor.MODEL, ActionPriority.HIGH));
                 break;
 
-            case COLLIDED:
+            case COLLISIONED:
+                this.resolveCollision(event, actions);
+                break;
+
             case NONE:
             default:
                 break;
@@ -397,5 +412,50 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
         }
 
         return false;
+    }
+
+    /**
+     * Resolves collision based on body types and shooter tracking.
+     * 
+     * Default rule: Both bodies die in collision.
+     * 
+     * Exceptions:
+     * - PLAYER vs own PROJECTILE (during 0.2s immunity): No collision (passes through)
+     * - STATIC or DECO bodies: Ignored (no collision rules applied)
+     */
+    private void resolveCollision(Event event, List<ActionDTO> actions) {
+        BodyType primary = event.primaryBodyType;
+        BodyType secondary = event.secondaryBodyType;
+
+        // Ignore collisions with STATIC or DECO bodies
+        if (primary == BodyType.STATIC || primary == BodyType.DECO ||
+            secondary == BodyType.STATIC || secondary == BodyType.DECO) {
+            return;
+        }
+
+        // Check shooter immunity for PLAYER vs PROJECTILE
+        if ((primary == BodyType.PLAYER && secondary == BodyType.PROJECTILE) ||
+            (primary == BodyType.PROJECTILE && secondary == BodyType.PLAYER)) {
+            
+            boolean isImmuneCollision = 
+                (primary == BodyType.PLAYER && secondary == BodyType.PROJECTILE &&
+                 event.secondaryShooterId != null && 
+                 event.secondaryShooterId.equals(event.entityIdPrimaryBody) &&
+                 event.secondaryImmuneToShooter) ||
+                (primary == BodyType.PROJECTILE && secondary == BodyType.PLAYER &&
+                 event.primaryShooterId != null && 
+                 event.primaryShooterId.equals(event.entityIdSecondaryBody) &&
+                 event.primaryImmuneToShooter);
+            
+            if (isImmuneCollision) {
+                return; // Projectile passes through its shooter during immunity period
+            }
+        }
+
+        // Default: Both die
+        actions.add(new ActionDTO(event.entityIdPrimaryBody,
+                ActionType.DIE, ActionExecutor.MODEL, ActionPriority.HIGH));
+        actions.add(new ActionDTO(event.entityIdSecondaryBody,
+                ActionType.DIE, ActionExecutor.MODEL, ActionPriority.HIGH));
     }
 }

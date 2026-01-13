@@ -10,9 +10,9 @@ import model.spatial.core.SpatialGrid;
 public class AbstractPhysicsBody extends AbstractBody implements PhysicsBody {
 
     public AbstractPhysicsBody(
-        BodyEventProcessor bodyEventProcessor, SpatialGrid spatialGrid,
-        PhysicsEngine phyEngine, BodyType bodyType, double maxLifeInSeconds) {
-            
+            BodyEventProcessor bodyEventProcessor, SpatialGrid spatialGrid,
+            PhysicsEngine phyEngine, BodyType bodyType, double maxLifeInSeconds) {
+
         super(bodyEventProcessor, spatialGrid, phyEngine, bodyType, maxLifeInSeconds);
     }
 
@@ -41,6 +41,7 @@ public class AbstractPhysicsBody extends AbstractBody implements PhysicsBody {
 
     public void reboundInNorth(PhysicsValuesDTO newVals, PhysicsValuesDTO oldVals,
             double worldWidth, double worldHeight) {
+
         PhysicsEngine engine = this.getPhysicsEngine();
         engine.reboundInNorth(newVals, oldVals, worldWidth, worldHeight);
     }

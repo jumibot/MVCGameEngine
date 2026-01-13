@@ -25,7 +25,7 @@ public class DynamicRenderable extends Renderable {
 
         super.paint(g);
 
-        if (!this.debugMode) {
+        if (bodyInfo == null || !this.debugMode) {
             return;
         }
 

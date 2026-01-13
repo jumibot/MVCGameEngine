@@ -13,6 +13,10 @@ public abstract class AbstractPhysicsEngine implements PhysicsEngine {
          * CONSTRUCTORS
          */
         public AbstractPhysicsEngine(PhysicsValuesDTO phyValues) {
+                if (phyValues == null) {
+                        throw new IllegalArgumentException("PhysicsValuesDTO cannot be null");
+                }
+
                 this.phyValues = new AtomicReference<>(phyValues);
         }
 
@@ -79,6 +83,10 @@ public abstract class AbstractPhysicsEngine implements PhysicsEngine {
         public abstract void setAngularSpeed(double angularSpeed);
 
         public void setPhysicsValues(PhysicsValuesDTO phyValues) {
+                if (phyValues == null) {
+                        throw new IllegalArgumentException("PhysicsValuesDTO cannot be null");
+                }
+
                 this.phyValues.set(phyValues);
         }
 
