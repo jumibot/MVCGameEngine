@@ -1,9 +1,6 @@
 package controller.ports;
 
-
-import model.*;
 import java.io.Serializable;
-
 
 /**
  *
