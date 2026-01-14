@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.awt.Dimension;
+import java.lang.reflect.Array;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 import model.bodies.core.AbstractBody;
@@ -467,19 +469,24 @@ public class Model implements BodyEventProcessor {
             return List.of();
 
         final String checkBodyId = checkBody.getEntityId();
-        BodyType checkBodyType = checkBody.getBodyType();
 
         ArrayList<String> candidates = checkBody.getScratchCandidateIds();
         this.spatialGrid.queryCollisionCandidates(checkBodyId, candidates);
-        if (candidates == null || candidates.isEmpty())
+        if (candidates.isEmpty())
             return List.of();
 
-        List<Event> collisionEvents = new ArrayList<>(32);
+        List<Event> collisionEvents = null;
+        HashSet<String> seen = checkBody.getScratchSeenCandidateIds();
+        seen.clear();
         for (String bodyId : candidates) {
             if (bodyId == null || bodyId.isEmpty())
                 continue;
 
-            // Dedupe by ID
+            // Dedupe by multiple references y differents cells
+            if (!seen.add(bodyId))
+                continue;
+
+            // Dedupe by symetry
             if (checkBodyId.compareTo(bodyId) >= 0)
                 continue;
 
@@ -497,52 +504,83 @@ public class Model implements BodyEventProcessor {
             if (!intersectsCircleCircle(newPhyValues, otherPhyValues))
                 continue;
 
+            if (collisionEvents == null) {
+                collisionEvents = new ArrayList<>(8);
+            }
             collisionEvents.add(new Event(checkBody, otherBody, EventType.COLLISIONED));
         }
-        return collisionEvents;
+        return collisionEvents == null ? List.of() : collisionEvents;
     }
 
     private List<Event> checkLimitEvents(Body body, PhysicsValuesDTO phyValues) {
-        List<Event> limitEvents = new ArrayList<>(4);
+        // List<Event> limitEvents = new ArrayList<>(4);
 
+        ArrayList<Event> limitEvents = null;
         if (phyValues.posX < 0) {
+            if (limitEvents == null)
+                limitEvents = new ArrayList<>(2);
             limitEvents.add(new Event(body, null, EventType.REACHED_EAST_LIMIT));
         }
 
         if (phyValues.posX >= this.worldWidth) {
+            if (limitEvents == null)
+                limitEvents = new ArrayList<>(2);
             limitEvents.add(new Event(body, null, EventType.REACHED_WEST_LIMIT));
         }
 
         if (phyValues.posY < 0) {
+            if (limitEvents == null)
+                limitEvents = new ArrayList<>(2);
             limitEvents.add(new Event(body, null, EventType.REACHED_NORTH_LIMIT));
         }
 
         if (phyValues.posY >= this.worldHeight) {
+            if (limitEvents == null)
+                limitEvents = new ArrayList<>(1);
             limitEvents.add(new Event(body, null, EventType.REACHED_SOUTH_LIMIT));
         }
 
-        return limitEvents;
+        return limitEvents == null ? List.of() : limitEvents;
     }
 
     private List<Event> detectEvents(Body checkBody,
             PhysicsValuesDTO newPhyValues, PhysicsValuesDTO oldPhyValues) {
 
-        List<Event> events = this.checkLimitEvents(checkBody, newPhyValues);
+        ArrayList<Event> events = null;
 
-        events.addAll(this.checkCollisions(checkBody, newPhyValues));
+        // 1) Limits
+        final List<Event> limitEvents = this.checkLimitEvents(checkBody, newPhyValues);
+        if (limitEvents != null && !limitEvents.isEmpty()) {
+            events = new ArrayList<>(limitEvents.size() + 4);
+            events.addAll(limitEvents);
+        }
 
+        // 2) Collisions
+        final List<Event> collisionEvents = this.checkCollisions(checkBody, newPhyValues);
+        if (collisionEvents != null && !collisionEvents.isEmpty()) {
+            if (events == null) {
+                events = new ArrayList<>(collisionEvents.size() + 4);
+            }
+            events.addAll(collisionEvents);
+        }
+
+        // 3) Player fire
         if (checkBody.getBodyType() == BodyType.PLAYER) {
             if (((PlayerBody) checkBody).mustFireNow(newPhyValues)) {
+                if (events == null)
+                    events = new ArrayList<>(2);
                 events.add(new Event(checkBody, null, EventType.MUST_FIRE));
             }
         }
 
+        // 4) Life over
         if (checkBody.isLifeOver()) {
+            if (events == null)
+                events = new ArrayList<>(1);
             events.add(new Event(checkBody, null, EventType.LIFE_OVER));
         }
 
-        // Eventos de colisión, zonas, etc.
-        return events;
+        return events == null ? List.of() : events;
     }
 
     private void doActions(

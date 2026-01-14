@@ -1,6 +1,7 @@
 package model.bodies.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 
 import model.bodies.ports.Body;
@@ -34,6 +35,8 @@ public abstract class AbstractBody implements Body {
     private final SpatialGrid spatialGrid;
     private final int[] scratchIdxs;
     private final ArrayList<String> scratchCandidateIds;
+    private final HashSet<String> scratchSeenCandidateIds = new HashSet<>(64);
+
 
     /**
      * CONSTRUCTORS
@@ -114,6 +117,11 @@ public abstract class AbstractBody implements Body {
     @Override
     public ArrayList<String> getScratchCandidateIds() {
         return scratchCandidateIds;
+    }
+
+    @Override
+    public HashSet<String> getScratchSeenCandidateIds() {
+        return this.scratchSeenCandidateIds;
     }
 
     @Override
