@@ -1,6 +1,7 @@
 package model.bodies.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 
 import model.bodies.ports.Body;
@@ -33,7 +34,9 @@ public abstract class AbstractBody implements Body {
     // physics update. ==> Zero allocation strategy
     private final SpatialGrid spatialGrid;
     private final int[] scratchIdxs;
-    private final ArrayList<String> collisionCandidates;
+    private final ArrayList<String> scratchCandidateIds;
+    private final HashSet<String> scratchSeenCandidateIds = new HashSet<>(64);
+
 
     /**
      * CONSTRUCTORS
@@ -50,7 +53,7 @@ public abstract class AbstractBody implements Body {
 
         this.spatialGrid = spatialGrid;
         this.scratchIdxs = new int[spatialGrid.getMaxCellsPerBody()];
-        this.collisionCandidates = new ArrayList<>(32);
+        this.scratchCandidateIds = new ArrayList<String>(64);
 
         this.entityId = UUID.randomUUID().toString();
         this.state = BodyState.STARTING;
@@ -109,6 +112,16 @@ public abstract class AbstractBody implements Body {
     @Override
     public PhysicsValuesDTO getPhysicsValues() {
         return this.phyEngine.getPhysicsValues();
+    }
+
+    @Override
+    public ArrayList<String> getScratchCandidateIds() {
+        return scratchCandidateIds;
+    }
+
+    @Override
+    public HashSet<String> getScratchSeenCandidateIds() {
+        return this.scratchSeenCandidateIds;
     }
 
     @Override

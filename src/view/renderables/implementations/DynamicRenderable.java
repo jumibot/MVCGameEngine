@@ -9,7 +9,7 @@ import view.renderables.ports.DynamicRenderDTO;
 
 public class DynamicRenderable extends Renderable {
 
-    private final boolean debugMode = false;
+    private final boolean debugMode = true;
 
     public DynamicRenderable(DynamicRenderDTO renderInfo, String assetId, ImageCache cache, long currentFrame) {
         super(renderInfo, assetId, cache, currentFrame);
@@ -25,7 +25,7 @@ public class DynamicRenderable extends Renderable {
 
         super.paint(g);
 
-        if (!this.debugMode) {
+        if (bodyInfo == null || !this.debugMode) {
             return;
         }
 

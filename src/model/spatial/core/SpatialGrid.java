@@ -137,7 +137,7 @@ public final class SpatialGrid {
      * @param entityId the entity whose collision neighborhood is queried
      * @return the list of collision candidate entityIds (possibly empty) or null
      */
-    public List<String> queryCollisionCandidates(String entityId) {
+    public ArrayList<String> queryCollisionCandidates(String entityId, ArrayList<String> scratchCandidateIds) {
         if (entityId == null || entityId.isEmpty())
             return null;
 
@@ -145,18 +145,17 @@ public final class SpatialGrid {
         if (cells == null || cells.count <= 0)
             return null;
 
-        List<String> out = new ArrayList<>(64);
-
+        scratchCandidateIds.clear();
         for (int i = 0; i < cells.count; i++) {
             final int cellIndex = cells.idxs[i];
             final ConcurrentHashMap<String, Boolean> bucket = this.grid[cellIndex];
 
             for (String id : bucket.keySet())
                 if (!entityId.equals(id))
-                    out.add(id);
+                    scratchCandidateIds.add(id);
         }
 
-        return out;
+        return scratchCandidateIds;
     }
 
     /**

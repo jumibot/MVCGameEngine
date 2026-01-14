@@ -1,5 +1,8 @@
 package model.bodies.ports;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import model.physics.ports.PhysicsValuesDTO;
 import model.spatial.core.SpatialGrid;
 
@@ -30,5 +33,9 @@ public interface Body {
 
     public SpatialGrid getSpatialGrid();
 
-    int[] getScratchIdxs();
+    public int[] getScratchIdxs();
+
+    public ArrayList<String> getScratchCandidateIds();
+
+    public HashSet<String> getScratchSeenCandidateIds();
 }
