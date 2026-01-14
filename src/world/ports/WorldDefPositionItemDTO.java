@@ -1,13 +1,13 @@
 package world.ports;
 
-public class WorldDefPositionItemDTO2 extends WorldDefItemDTO2 {
+public class WorldDefPositionItemDTO extends WorldDefItemDTO {
 
     // Geometry
     public final double posX;
     public final double posY;
 
 
-    public WorldDefPositionItemDTO2(
+    public WorldDefPositionItemDTO(
             String assetId, double size, double angle, 
             double posX, double posY) {
 

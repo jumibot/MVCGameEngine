@@ -1,6 +1,6 @@
 package world.ports;
 
-public class WorldDefWeaponDTO2 extends WorldDefItemDTO2 {
+public class WorldDefWeaponDTO extends WorldDefItemDTO {
 
     public WorldDefWeaponType type; // Weapon type
     public final double projectileSpeed; // Projectile initial speed
@@ -14,7 +14,7 @@ public class WorldDefWeaponDTO2 extends WorldDefItemDTO2 {
     public final double projectileMass; // Mass of the projectile (kilograms)
     public final double maxLifetimeInSeconds; // Maximum lifetime of the projectile (seconds)
 
-    public WorldDefWeaponDTO2(String assetId, double size, WorldDefWeaponType type,
+    public WorldDefWeaponDTO(String assetId, double size, WorldDefWeaponType type,
             double projectileSpeed, double acceleration, double accelerationDuration,
             int burstSize, int burstFireRate,int fireRate, int maxAmmo, double reloadTime, 
             double projectileMass, double maxLifetimeInSeconds) {

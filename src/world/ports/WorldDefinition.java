@@ -11,32 +11,32 @@ public class WorldDefinition {
 
     public final AssetCatalog gameAssets;
     public final WorldDefBackgroundDTO background;
-    public final ArrayList<WorldDefPositionItemDTO2> spaceDecorators;
-    public final ArrayList<WorldDefPositionItemDTO2> gravityBodies;
-    public final ArrayList<WorldDefItemDTO2> asteroids;
+    public final ArrayList<WorldDefPositionItemDTO> spaceDecorators;
+    public final ArrayList<WorldDefPositionItemDTO> gravityBodies;
+    public final ArrayList<WorldDefItemDTO> asteroids;
 
-    public final ArrayList<WorldDefWeaponDTO2> primaryWeapon;
-    public final ArrayList<WorldDefWeaponDTO2> secondaryWeapon;
-    public final ArrayList<WorldDefWeaponDTO2> mineLaunchers;
-    public final ArrayList<WorldDefWeaponDTO2> missilLaunchers;
+    public final ArrayList<WorldDefWeaponDTO> primaryWeapon;
+    public final ArrayList<WorldDefWeaponDTO> secondaryWeapon;
+    public final ArrayList<WorldDefWeaponDTO> mineLaunchers;
+    public final ArrayList<WorldDefWeaponDTO> missilLaunchers;
 
-    public ArrayList<WorldDefItemDTO2> spaceshipsDef;
+    public ArrayList<WorldDefItemDTO> spaceshipsDef;
 
     public WorldDefinition(
             int worldWidth,
             int worldHeight,
             AssetCatalog gameAssets,
             WorldDefBackgroundDTO background,
-            ArrayList<WorldDefPositionItemDTO2> spaceDecorators,
-            ArrayList<WorldDefPositionItemDTO2> gravityBodies,
+            ArrayList<WorldDefPositionItemDTO> spaceDecorators,
+            ArrayList<WorldDefPositionItemDTO> gravityBodies,
 
-            ArrayList<WorldDefItemDTO2> asteroids,
-            ArrayList<WorldDefItemDTO2> spaceships,
+            ArrayList<WorldDefItemDTO> asteroids,
+            ArrayList<WorldDefItemDTO> spaceships,
 
-            ArrayList<WorldDefWeaponDTO2> primaryWeapon,
-            ArrayList<WorldDefWeaponDTO2> secondaryWeapon,
-            ArrayList<WorldDefWeaponDTO2> mineLaunchers,
-            ArrayList<WorldDefWeaponDTO2> missilLaunchers) {
+            ArrayList<WorldDefWeaponDTO> primaryWeapon,
+            ArrayList<WorldDefWeaponDTO> secondaryWeapon,
+            ArrayList<WorldDefWeaponDTO> mineLaunchers,
+            ArrayList<WorldDefWeaponDTO> missilLaunchers) {
 
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;

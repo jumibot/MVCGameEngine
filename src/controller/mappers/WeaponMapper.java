@@ -1,11 +1,11 @@
 package controller.mappers;
 
 import model.weapons.ports.WeaponDto;
-import world.ports.WorldDefWeaponDTO2;
+import world.ports.WorldDefWeaponDTO;
 
 public class WeaponMapper {
 
-    public static WeaponDto fromWorldDef(WorldDefWeaponDTO2 weaponDef, int shootingOffset) {
+    public static WeaponDto fromWorldDef(WorldDefWeaponDTO weaponDef, int shootingOffset) {
         if (weaponDef == null) {
             return null;
         }

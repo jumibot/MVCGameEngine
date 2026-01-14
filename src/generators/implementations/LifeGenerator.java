@@ -7,13 +7,13 @@ import _helpers.DoubleVector;
 import controller.ports.EngineState;
 import controller.ports.WorldEvolver;
 import generators.ports.LifeConfigDTO;
-import world.ports.WorldDefItemDTO2;
+import world.ports.WorldDefItemDTO;
 import world.ports.WorldDefinition;
 
 public class LifeGenerator implements Runnable {
 
     private final Random rnd = new Random();
-    private final ArrayList<WorldDefItemDTO2> items;
+    private final ArrayList<WorldDefItemDTO> items;
     private final WorldEvolver worldEvolver;
     private Thread thread;
     private final WorldDefinition worldDefinition;
@@ -129,10 +129,10 @@ public class LifeGenerator implements Runnable {
     }
 
     private void createPlayers() {
-        ArrayList<WorldDefItemDTO2> dBodies = this.worldDefinition.spaceshipsDef;
+        ArrayList<WorldDefItemDTO> dBodies = this.worldDefinition.spaceshipsDef;
         String playerId = null;
 
-        for (WorldDefItemDTO2 body : dBodies) {
+        for (WorldDefItemDTO body : dBodies) {
             playerId = this.worldEvolver.addPlayer(
                     body.assetId, body.size, 500, 200, 0, 0, 0, 0, 0,
                     this.randomAngularSpeed(270), 0, 0);

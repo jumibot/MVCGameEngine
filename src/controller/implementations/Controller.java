@@ -31,7 +31,7 @@ import view.renderables.ports.DynamicRenderDTO;
 import view.renderables.ports.PlayerRenderDTO;
 import view.renderables.ports.RenderDTO;
 import view.renderables.ports.SpatialGridStatisticsRenderDTO;
-import world.ports.WorldDefWeaponDTO2;
+import world.ports.WorldDefWeaponDTO;
 
 /**
  * Controller
@@ -214,7 +214,7 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
         this.view.updateStaticRenderables(renderablesData);
     }
 
-    public void addWeaponToPlayer(String playerId, WorldDefWeaponDTO2 weaponDef, int shootingOffset) {
+    public void addWeaponToPlayer(String playerId, WorldDefWeaponDTO weaponDef, int shootingOffset) {
 
         WeaponDto weapon = WeaponMapper.fromWorldDef(weaponDef, shootingOffset);
 
