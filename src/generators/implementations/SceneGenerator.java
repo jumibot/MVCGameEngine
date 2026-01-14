@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import controller.ports.WorldInitializer;
-import world.ports.WorldDefPositionItemDTO;
+import world.ports.WorldDefPositionItemDTO2;
 import world.ports.WorldDefinition;
 
 public class SceneGenerator {
@@ -29,17 +29,17 @@ public class SceneGenerator {
     }
 
     private void createSBodies() {
-        ArrayList<WorldDefPositionItemDTO> sBodies = this.worldDefinition.gravityBodies;
+        ArrayList<WorldDefPositionItemDTO2> sBodies = this.worldDefinition.gravityBodies;
 
-        for (WorldDefPositionItemDTO body : sBodies) {
+        for (WorldDefPositionItemDTO2 body : sBodies) {
             this.worldInitializer.addStaticBody(body.assetId, body.size, body.posX, body.posY, body.angle);
         }
     }
 
     private void createSpaceDecorators() {
-        ArrayList<WorldDefPositionItemDTO> decorators = this.worldDefinition.spaceDecorators;
+        ArrayList<WorldDefPositionItemDTO2> decorators = this.worldDefinition.spaceDecorators;
 
-        for (WorldDefPositionItemDTO deco : decorators) {
+        for (WorldDefPositionItemDTO2 deco : decorators) {
             this.worldInitializer.addDecorator(deco.assetId, deco.size, deco.posX, deco.posY, deco.angle);
         }
     }

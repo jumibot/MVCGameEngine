@@ -5,7 +5,7 @@ package world.ports;
  *
  * @author juanm
  */
-public class WorldDefItemDTO {
+public class WorldDefItemDTO2 {
 
     public final String assetId;
 
@@ -14,7 +14,7 @@ public class WorldDefItemDTO {
     public final double angle;
 
 
-    public WorldDefItemDTO(String assetId, double size, double angle) {
+    public WorldDefItemDTO2(String assetId, double size, double angle) {
         this.assetId = assetId;
         this.size = size;
         this.angle = angle;
