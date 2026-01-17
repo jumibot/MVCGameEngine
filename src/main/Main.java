@@ -19,7 +19,7 @@ public class Main {
         int worldWidth = 2450;
         int worldHeight = 1450;
         int maxDynamicBodies = 5000;
-        int maxAsteroidCreationDelay = 2000;
+        int maxAsteroidCreationDelay = 5000;
         int minAsteroidSize = 8;
         int maxAsteroidSize = 16;
         int maxAsteroidMass = 1000;

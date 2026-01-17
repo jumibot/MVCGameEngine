@@ -4,6 +4,8 @@ import java.util.List;
 
 import model.bodies.ports.BodyEventProcessor;
 import model.bodies.ports.BodyType;
+import model.bodies.ports.PlayerDTO;
+import model.emitter.implementations.BasicEmitter;
 import model.physics.ports.PhysicsEngine;
 import model.physics.ports.PhysicsValuesDTO;
 import model.spatial.core.SpatialGrid;
@@ -12,24 +14,36 @@ import model.weapons.ports.WeaponDto;
 
 public class PlayerBody extends DynamicBody {
 
-    private double maxThrustForce = 80; //
-    private double maxAngularAcc = 1000; // degrees*s^-2
-    private double angularSpeed = 30; // degrees*s^-1
+    private BasicEmitter emitter;
     private final List<Weapon> weapons = new java.util.ArrayList<>(4);
     private int currentWeaponIndex = -1; // -1 = sin arma
     private double damage = 0D;
     private double energye = 1D;
     private int temperature = 1;
     private double shield = 1D;
+    private int score = 0;
 
-    public PlayerBody(BodyEventProcessor bodyEventProcessor, SpatialGrid spatialGrid,
+    public PlayerBody(BodyEventProcessor bodyEventProcessor,
+            SpatialGrid spatialGrid,
             PhysicsEngine physicsEngine,
             double maxLifeInSeconds) {
 
-        super(bodyEventProcessor, spatialGrid,
+        super(bodyEventProcessor,
+                spatialGrid,
                 physicsEngine,
                 BodyType.PLAYER,
                 maxLifeInSeconds);
+
+        this.setMaxThrustForce(80);
+        this.setMaxAngularAcceleration(1000);
+        this.setAngularSpeed(30);
+    }
+
+    public void addEmitter(BasicEmitter emitter) {
+        if (emitter == null) {
+            throw new IllegalStateException("Emitter is null. Cannot add to player body.");
+        }
+        this.emitter = emitter;
     }
 
     public void addWeapon(Weapon weapon) {
@@ -95,8 +109,21 @@ public class PlayerBody extends DynamicBody {
         return damage;
     }
 
-    public void setDamage(double damage) {
-        this.damage = damage;
+    public PlayerDTO getData() {
+        PlayerDTO playerData = new PlayerDTO(
+                this.getEntityId(),
+                "",
+                this.damage,
+                this.energye,
+                this.shield,
+                this.temperature,
+                this.getActiveWeaponIndex(),
+                this.getAmmoStatusPrimary(),
+                this.getAmmoStatusSecondary(),
+                this.getAmmoStatusMines(),
+                this.getAmmoStatusMissiles(),
+                this.score);
+        return playerData;
     }
 
     public double getEnergy() {
@@ -111,13 +138,8 @@ public class PlayerBody extends DynamicBody {
         return this.temperature;
     }
 
-    public void thrustOn() {
-        this.setThrust(this.maxThrustForce);
-    }
-
-    public void thrustOff() {
-        this.resetAcceleration();
-        this.setThrust(0.0d);
+    public BasicEmitter getEmitter() {
+        return this.emitter;
     }
 
     public void registerFireRequest() {
@@ -136,30 +158,43 @@ public class PlayerBody extends DynamicBody {
     }
 
     public void reverseThrust() {
-        this.setThrust(-this.maxThrustForce);
+        this.setThrust(-this.getMaxThrustForce());
     }
 
     public void rotateLeftOn() {
         PhysicsValuesDTO phyValues = this.getPhysicsValues();
+
         if (phyValues.angularSpeed == 0) {
-            this.setAngularSpeed(-this.angularSpeed);
+            this.setAngularSpeed(-this.getAngularSpeed());
         }
 
-        this.addAngularAcceleration(-this.maxAngularAcc);
+        this.addAngularAcceleration(-this.getMaxAngularAcceleration());
     }
 
     public void rotateRightOn() {
         PhysicsValuesDTO phyValues = this.getPhysicsValues();
         if (phyValues.angularSpeed == 0) {
-            this.setAngularSpeed(this.angularSpeed);
+            this.setAngularSpeed(this.getAngularSpeed());
         }
 
-        this.addAngularAcceleration(this.maxAngularAcc);
+        this.addAngularAcceleration(this.getMaxAngularAcceleration());
     }
 
     public void rotateOff() {
         this.setAngularAcceleration(0.0d);
         this.setAngularSpeed(0.0d);
+    }
+
+    public void setDamage(double damage) {
+        this.damage = damage;
+    }
+
+    public void setEmitter(BasicEmitter emitter) {
+        this.emitter = emitter;
+    }
+
+    public void setEnergye(double energye) {
+        this.energye = energye;
     }
 
     public void selectNextWeapon() {
@@ -177,17 +212,8 @@ public class PlayerBody extends DynamicBody {
         }
     }
 
-    public void setEnergye(double energye) {
-        this.energye = energye;
-    }
-
-    public void setMaxThrustForce(double maxThrust) {
-        this.maxThrustForce = maxThrust;
-    }
-
-    public void setMaxAngularAcceleration(double maxAngularAcc) {
-        this.setAngularSpeed(this.angularSpeed);
-        this.maxAngularAcc = maxAngularAcc;
+    public void setShield(double shield) {
+        this.shield = shield;
     }
 
     public void setTemperature(int temperature) {
@@ -208,5 +234,16 @@ public class PlayerBody extends DynamicBody {
         double dtSeconds = dtNanos / 1_000_000_000;
 
         return weapon.mustFireNow(dtSeconds);
+    }
+
+    public boolean mustTrailEmit(PhysicsValuesDTO newPhyValues) {
+        if (this.emitter == null) {
+            return false;
+        }
+
+        double dtNanos = newPhyValues.timeStamp - this.getPhysicsValues().timeStamp;
+        double dtSeconds = dtNanos / 1_000_000_000;
+
+        return this.emitter.mustEmitNow(dtSeconds);
     }
 }

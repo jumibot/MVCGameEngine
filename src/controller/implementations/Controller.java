@@ -7,6 +7,7 @@ import java.util.List;
 import assets.core.AssetCatalog;
 
 import controller.mappers.DynamicRenderableMapper;
+import controller.mappers.EmitterMapper;
 import controller.mappers.PlayerRenderableMapper;
 import controller.mappers.RenderableMapper;
 import controller.mappers.SpatialGridStatisticsMapper;
@@ -17,6 +18,7 @@ import controller.ports.WorldInitializer;
 
 import model.bodies.ports.BodyDTO;
 import model.bodies.ports.BodyType;
+import model.emitter.ports.EmitterDto;
 import model.implementations.Model;
 import model.weapons.ports.WeaponDto;
 import model.ports.ActionDTO;
@@ -31,6 +33,7 @@ import view.renderables.ports.DynamicRenderDTO;
 import view.renderables.ports.PlayerRenderDTO;
 import view.renderables.ports.RenderDTO;
 import view.renderables.ports.SpatialGridStatisticsRenderDTO;
+import world.ports.WorldDefEmitterDTO;
 import world.ports.WorldDefWeaponDTO;
 
 /**
@@ -136,9 +139,10 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
         this.setView(view);
     }
 
-    /**
-     * PUBLICS
-     */
+    //
+    // PUBLICS
+    //
+
     public void activate() {
         if (this.worldDimension == null) {
             throw new IllegalArgumentException("Null world dimension");
@@ -182,6 +186,13 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
         ArrayList<RenderDTO> renderablesData = RenderableMapper.fromBodyDTO(bodiesData);
 
         this.view.updateStaticRenderables(renderablesData);
+    }
+
+    @Override
+    public void addEmitterToPlayer(String playerId, WorldDefEmitterDTO bodyEmitterDef) {
+
+        EmitterDto bodyEmitter = EmitterMapper.fromWorldDef(bodyEmitterDef);
+        this.model.addEmitterToPlayer(playerId, bodyEmitter);
     }
 
     public String addPlayer(String assetId, double size, double posX, double posY,
@@ -231,11 +242,6 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
                 }
             }
         }
-
-        // if (!containsDeathLikeAction(actions)) {
-        // actions.add(new ActionDTO(
-        // ActionType.MOVE, ActionExecutor.PHYSICS_BODY, ActionPriority.NORMAL));
-        // }
 
         return actions;
     }
@@ -294,8 +300,13 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
         this.view.loadAssets(assets);
     }
 
-    public void notifyNewProjectileFired(String entityId, String assetId) {
+    public void notifyNewDynamic(String entityId, String assetId) {
         this.view.addDynamicRenderable(entityId, assetId);
+    }
+
+    public void notifyNewStatic(String entityId, String assetId) {
+        System.out.println("Controller.notifyNewStatic: entityId=" + entityId + ", assetId=" + assetId);
+        this.view.addStaticRenderable(entityId, assetId);
     }
 
     public void playerFire(String playerId) {
@@ -348,9 +359,10 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
         this.worldDimension = new Dimension(width, height);
     }
 
-    /**
-     * PRIVATE
-     */
+    //
+    // PRIVATE
+    //
+
     private List<ActionDTO> applyGameRules(Event event) {
         List<ActionDTO> actions = new ArrayList<>(8);
 
@@ -377,7 +389,7 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
 
             case MUST_FIRE:
                 actions.add(new ActionDTO(event.entityIdPrimaryBody,
-                        ActionType.FIRE, ActionExecutor.MODEL, ActionPriority.LOW));
+                        ActionType.SPAWN_PROJECTILE, ActionExecutor.MODEL, ActionPriority.LOW));
                 break;
 
             case LIFE_OVER:
@@ -385,8 +397,16 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
                         ActionType.DIE, ActionExecutor.MODEL, ActionPriority.HIGH));
                 break;
 
-            case COLLISIONED:
+            case COLLISION:
                 this.resolveCollision(event, actions);
+                break;
+
+            case THRUST_ON:
+                actions.add(new ActionDTO(
+                        event.entityIdPrimaryBody,
+                        ActionType.SPAWN_BODY,
+                        ActionExecutor.MODEL,
+                        ActionPriority.NORMAL));
                 break;
 
             case NONE:
@@ -413,42 +433,23 @@ public class Controller implements WorldEvolver, WorldInitializer, DomainEventPr
         return false;
     }
 
-    /**
-     * Resolves collision based on body types and shooter tracking.
-     * 
-     * Default rule: Both bodies die in collision.
-     * 
-     * Exceptions:
-     * - PLAYER vs own PROJECTILE (during 0.2s immunity): No collision (passes through)
-     * - STATIC or DECO bodies: Ignored (no collision rules applied)
-     */
     private void resolveCollision(Event event, List<ActionDTO> actions) {
         BodyType primary = event.primaryBodyType;
         BodyType secondary = event.secondaryBodyType;
 
-        // Ignore collisions with STATIC or DECO bodies
-        if (primary == BodyType.STATIC || primary == BodyType.DECO ||
-            secondary == BodyType.STATIC || secondary == BodyType.DECO) {
+        // Ignore collisions with DECO bodies
+        if (primary == BodyType.DECO || secondary == BodyType.DECO) {
             return;
         }
 
-        // Check shooter immunity for PLAYER vs PROJECTILE
-        if ((primary == BodyType.PLAYER && secondary == BodyType.PROJECTILE) ||
-            (primary == BodyType.PROJECTILE && secondary == BodyType.PLAYER)) {
-            
-            boolean isImmuneCollision = 
-                (primary == BodyType.PLAYER && secondary == BodyType.PROJECTILE &&
-                 event.secondaryShooterId != null && 
-                 event.secondaryShooterId.equals(event.entityIdPrimaryBody) &&
-                 event.secondaryImmuneToShooter) ||
-                (primary == BodyType.PROJECTILE && secondary == BodyType.PLAYER &&
-                 event.primaryShooterId != null && 
-                 event.primaryShooterId.equals(event.entityIdSecondaryBody) &&
-                 event.primaryImmuneToShooter);
-            
-            if (isImmuneCollision) {
-                return; // Projectile passes through its shooter during immunity period
-            }
+        // Ignore collisions with STATIC bodies
+        if (primary == BodyType.STATIC || secondary == BodyType.STATIC) {
+            return;
+        }
+
+        // Check shooter immunity for PLAYER vs PROJECTILE and viceversa
+        if (event.shooterInmunity) {
+            return; // Projectile passes through its shooter during immunity period
         }
 
         // Default: Both die

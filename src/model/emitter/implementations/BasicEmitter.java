@@ -1,11 +1,11 @@
-package model.trails.implementations;
+package model.emitter.implementations;
 
-import model.trails.core.AbstractTrailEmitter;
-import model.trails.ports.TrailDto;
+import model.emitter.core.AbstractEmitter;
+import model.emitter.ports.EmitterDto;
 
-public class BasicTrail extends AbstractTrailEmitter {
+public class BasicEmitter extends AbstractEmitter {
 
-    public BasicTrail(TrailDto trailConfig) {
+    public BasicEmitter(EmitterDto trailConfig) {
         super(trailConfig);
     }
 

@@ -8,36 +8,29 @@ public class WorldDefinition {
 
     public final int worldWidth;
     public final int worldHeight;
-
     public final AssetCatalog gameAssets;
 
     public final WorldDefBackgroundDTO background;
     public final ArrayList<WorldDefPositionItemDTO> spaceDecorators;
     public final ArrayList<WorldDefPositionItemDTO> gravityBodies;
     public final ArrayList<WorldDefItemDTO> asteroids;
-    public ArrayList<WorldDefItemDTO> spaceshipsDef;
-    public final ArrayList<WorldDefItemDTO> trails;
-
-    public final ArrayList<WorldDefWeaponDTO> primaryWeapon;
-    public final ArrayList<WorldDefWeaponDTO> secondaryWeapon;
-    public final ArrayList<WorldDefWeaponDTO> mineLaunchers;
-    public final ArrayList<WorldDefWeaponDTO> missilLaunchers;
-
+    public final ArrayList<WorldDefItemDTO> spaceshipsDef;
+    public final ArrayList<WorldDefEmitterDTO> trailEmitterDef;
+    public final ArrayList<WorldDefWeaponDTO> primaryWeaponDef;
+    public final ArrayList<WorldDefWeaponDTO> secondaryWeaponDef;
+    public final ArrayList<WorldDefWeaponDTO> mineLaunchersDef;
+    public final ArrayList<WorldDefWeaponDTO> missilLaunchersDef;
 
     public WorldDefinition(
             int worldWidth,
             int worldHeight,
-            
             AssetCatalog gameAssets,
-
             WorldDefBackgroundDTO background,
             ArrayList<WorldDefPositionItemDTO> spaceDecorators,
             ArrayList<WorldDefPositionItemDTO> gravityBodies,
-
             ArrayList<WorldDefItemDTO> asteroids,
             ArrayList<WorldDefItemDTO> spaceships,
-            ArrayList<WorldDefItemDTO> trails,
-
+            ArrayList<WorldDefEmitterDTO> trailEmitter,
             ArrayList<WorldDefWeaponDTO> primaryWeapon,
             ArrayList<WorldDefWeaponDTO> secondaryWeapon,
             ArrayList<WorldDefWeaponDTO> mineLaunchers,
@@ -50,11 +43,11 @@ public class WorldDefinition {
         this.spaceDecorators = spaceDecorators;
         this.gravityBodies = gravityBodies;
         this.asteroids = asteroids;
-        this.primaryWeapon = primaryWeapon;
-        this.secondaryWeapon = secondaryWeapon;
-        this.mineLaunchers = mineLaunchers;
-        this.missilLaunchers = missilLaunchers;
+        this.primaryWeaponDef = primaryWeapon;
+        this.secondaryWeaponDef = secondaryWeapon;
+        this.mineLaunchersDef = mineLaunchers;
+        this.missilLaunchersDef = missilLaunchers;
         this.spaceshipsDef = spaceships;
-        this.trails = trails;
+        this.trailEmitterDef = trailEmitter;
     }
 }

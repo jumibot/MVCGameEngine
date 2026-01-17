@@ -45,6 +45,9 @@ import model.bodies.ports.BodyType;
 public class DynamicBody extends AbstractPhysicsBody implements Runnable {
 
     private Thread thread;
+    private double maxThrustForce; //
+    private double maxAngularAcc; // degrees*s^-2
+    private double angularSpeed; // degrees*s^-1
 
     /**
      * CONSTRUCTORS
@@ -74,10 +77,6 @@ public class DynamicBody extends AbstractPhysicsBody implements Runnable {
 
     public void addAngularAcceleration(double angularSpeed) {
         this.getPhysicsEngine().addAngularAcceleration(angularSpeed);
-    }
-
-    public boolean isThrusting() {
-        return this.getPhysicsEngine().isThrusting();
     }
 
     public void resetAcceleration() {
@@ -113,6 +112,18 @@ public class DynamicBody extends AbstractPhysicsBody implements Runnable {
         }
     }
 
+    public double getAngularSpeed() {
+        return this.angularSpeed;
+    }
+
+    public double getMaxThrustForce() {
+        return this.maxThrustForce;
+    }
+
+    public double getMaxAngularAcceleration() {
+        return this.maxAngularAcc;
+    }
+
     public void setAngularAcceleration(double angularAcc) {
         this.getPhysicsEngine().setAngularAcceleration(angularAcc);
     }
@@ -121,7 +132,26 @@ public class DynamicBody extends AbstractPhysicsBody implements Runnable {
         this.getPhysicsEngine().setAngularSpeed(angularSpeed);
     }
 
+    public void setMaxThrustForce(double maxThrust) {
+        this.maxThrustForce = maxThrust;
+    }
+
+    public void setMaxAngularAcceleration(double maxAngularAcc) {
+        this.setAngularSpeed(this.angularSpeed);
+        this.maxAngularAcc = maxAngularAcc;
+    }
+
     public void setThrust(double thrust) {
         this.getPhysicsEngine().setThrust(thrust);
     }
+
+    public void thrustOn() {
+        this.setThrust(this.maxThrustForce);
+    }
+
+    public void thrustOff() {
+        this.resetAcceleration();
+        this.setThrust(0.0d);
+    }
+
 }

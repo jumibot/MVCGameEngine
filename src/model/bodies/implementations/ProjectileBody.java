@@ -27,14 +27,14 @@ import model.spatial.core.SpatialGrid;
  */
 public class ProjectileBody extends AbstractPhysicsBody implements Runnable {
 
-    private static final double SHOOTER_IMMUNITY_TIME = 0.2; // seconds
-    
+    private static final double SHOOTER_IMMUNITY_TIME = 1; // seconds
     private final String shooterId; // ID of the entity that shot this projectile
     private Thread thread;
 
-    /**
-     * CONSTRUCTORS
-     */
+    //
+    //  CONSTRUCTORS
+    //
+
     public ProjectileBody(
             BodyEventProcessor bodyEventProcessor, 
             SpatialGrid spatialGrid,
@@ -91,7 +91,7 @@ public class ProjectileBody extends AbstractPhysicsBody implements Runnable {
      * @return true if projectile is still within immunity period (< 0.2s old)
      *         to prevent collision with shooter at launch
      */
-    public boolean isImmuneToShooter() {
+    public boolean isImmune() {
         return this.shooterId != null && 
                this.getLifeInSeconds() < SHOOTER_IMMUNITY_TIME;
     }

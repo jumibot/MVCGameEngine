@@ -31,9 +31,10 @@ public class LifeGenerator implements Runnable {
         this.lifeConfig = lifeConfig;
     }
 
-    /**
-     * PUBLIC
-     */
+    //
+    // PUBLIC
+    //
+
     public void activate() {
         this.thread = new Thread(this);
         this.thread.setName("Life generator");
@@ -43,10 +44,10 @@ public class LifeGenerator implements Runnable {
         System.out.println("Life generator activated! · RandomWorld");
     }
 
-    /**
-     * PRIVATE
-     */
-    // ++
+    //
+    // PRIVATE
+    //
+
     private void addRandomDynamicBody() {
         DoubleVector speed = this.randomSpeed();
         if (this.lifeConfig.fixedSpeed) {
@@ -138,22 +139,24 @@ public class LifeGenerator implements Runnable {
                     this.randomAngularSpeed(270), 0, 0);
 
             this.worldEvolver.addWeaponToPlayer(
-                    playerId, this.worldDefinition.primaryWeapon.get(0), 0);
+                    playerId, this.worldDefinition.primaryWeaponDef.get(0), 0);
 
             this.worldEvolver.addWeaponToPlayer(
-                    playerId, this.worldDefinition.secondaryWeapon.get(0), 0);
+                    playerId, this.worldDefinition.secondaryWeaponDef.get(0), 0);
 
             this.worldEvolver.addWeaponToPlayer(
-                    playerId, this.worldDefinition.missilLaunchers.get(0), -15);
+                    playerId, this.worldDefinition.missilLaunchersDef.get(0), -15);
 
             this.worldEvolver.addWeaponToPlayer(
-                    playerId, this.worldDefinition.mineLaunchers.get(0), 15);
+                    playerId, this.worldDefinition.mineLaunchersDef.get(0), 15);
+
+            this.worldEvolver.addEmitterToPlayer(playerId, this.worldDefinition.trailEmitterDef.get(0));
         }
 
-        if (playerId != null) {
-            this.worldEvolver.setLocalPlayer(playerId);
-        } else {
-            System.err.println("[DEBUG] No valid playerId to set as local player.");
+        if (playerId == null) {
+            System.out.println("LifeGenerator.createPlayers: No player created!");
+            return;
         }
+        this.worldEvolver.setLocalPlayer(playerId);
     }
 }

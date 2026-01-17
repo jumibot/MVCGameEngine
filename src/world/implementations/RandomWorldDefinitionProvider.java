@@ -7,7 +7,10 @@ import assets.core.AssetCatalog;
 import assets.implementations.ProjectAssets;
 import assets.ports.AssetInfoDTO;
 import assets.ports.AssetType;
+import model.bodies.ports.Body;
+import model.bodies.ports.BodyType;
 import world.ports.WorldDefBackgroundDTO;
+import world.ports.WorldDefEmitterDTO;
 import world.ports.WorldDefItemDTO;
 import world.ports.WorldDefPositionItemDTO;
 import world.ports.WorldDefWeaponDTO;
@@ -30,7 +33,8 @@ public class RandomWorldDefinitionProvider implements WorldDefinitionProvider {
 
     private ArrayList<WorldDefItemDTO> asteroidsDef = new ArrayList<>();
     private ArrayList<WorldDefItemDTO> spaceshipsDef = new ArrayList<>();
-    private ArrayList<WorldDefItemDTO> trailsDef = new ArrayList<>();
+
+    private ArrayList<WorldDefEmitterDTO> trailEmitterDef = new ArrayList<>();
 
     private ArrayList<WorldDefWeaponDTO> primaryWeapon = new ArrayList<>();
     private ArrayList<WorldDefWeaponDTO> secondaryWeaponDef = new ArrayList<>();
@@ -67,7 +71,7 @@ public class RandomWorldDefinitionProvider implements WorldDefinitionProvider {
         trailIds.add("halo_9");
         trailIds.add("meteor_1");
         trailIds.add("meteor_3");
-        this.dynamicBodies(this.trailsDef, trailIds, 20, 10);
+        this.emitters(this.trailEmitterDef, trailIds, 20, 10);
 
         this.primaryWeapon(this.primaryWeapon, 1, AssetType.BULLET,
                 15, 15, 350d, 8);
@@ -84,7 +88,7 @@ public class RandomWorldDefinitionProvider implements WorldDefinitionProvider {
                 6000d, 1d, 4);
 
         WorldDefinition worlDef = new WorldDefinition(this.width, this.height, this.gameAssets,
-                background, decoratorsDef, gravityBodiesDef, asteroidsDef, spaceshipsDef, trailsDef,
+                background, decoratorsDef, gravityBodiesDef, asteroidsDef, spaceshipsDef, trailEmitterDef,
                 primaryWeapon, secondaryWeaponDef, missilLaunchersDef, mineLaunchersDef);
 
         return worlDef;
@@ -232,6 +236,34 @@ public class RandomWorldDefinitionProvider implements WorldDefinitionProvider {
                     firingSpeed, 0, 0,
                     1, 0, fireRate, 100, 2,
                     100, 6D));
+        }
+    }
+
+    private void emitters(ArrayList<WorldDefEmitterDTO> emitters, ArrayList<String> assetIds,
+            int maxSize, int minSize) {
+
+        AssetInfoDTO assetInfo;
+
+        for (String assetId : assetIds) {
+            assetInfo = this.projectAssets.catalog.get(assetId);
+            this.gameAssets.register(assetInfo);
+            emitters.add(new WorldDefEmitterDTO(
+                    BodyType.TEMPORARY_DECO,
+                    assetId,
+                    this.randomSize(maxSize, minSize),
+                    100,
+                    100,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    20,
+                    1000,
+                    0,
+                    0,
+                    5));
         }
     }
 

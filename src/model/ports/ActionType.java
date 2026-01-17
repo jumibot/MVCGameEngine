@@ -3,7 +3,7 @@ package model.ports;
 
 public enum ActionType {
     DIE,
-    FIRE,
+    EXPLODE_IN_FRAGMENTS,
     GO_INSIDE,
     MOVE,
     NONE,
@@ -11,5 +11,6 @@ public enum ActionType {
     REBOUND_IN_WEST,
     REBOUND_IN_NORTH,
     REBOUND_IN_SOUTH,
-    EXPLODE_IN_FRAGMENTS,
+    SPAWN_BODY,
+    SPAWN_PROJECTILE,
 }

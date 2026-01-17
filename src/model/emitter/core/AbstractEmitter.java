@@ -1,19 +1,23 @@
-package model.trails.core;
+package model.emitter.core;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
-import model.trails.ports.TrailDto;
+import model.emitter.ports.EmitterDto;
 
-public abstract class AbstractTrailEmitter {
+public abstract class AbstractEmitter {
 
     private final String id;
-    private final TrailDto config;
+    private final EmitterDto config;
     private final AtomicLong lastRequest = new AtomicLong(0L);
     private AtomicLong lastHandledRequest = new AtomicLong(0L);
     private volatile double cooldown = 0.0; // seconds
 
-    public AbstractTrailEmitter(TrailDto config) {
+    public AbstractEmitter(EmitterDto config) {
+        if (config == null) {
+            throw new IllegalArgumentException(
+                    "config cannot be null. Emitter not created");
+        }
 
         if (config.emisionRate <= 0) {
             throw new IllegalArgumentException(
@@ -36,8 +40,8 @@ public abstract class AbstractTrailEmitter {
         return this.cooldown;
     }
 
-    public TrailDto getConfig() {
-        return new TrailDto(this.config);
+    public EmitterDto getConfig() {
+        return new EmitterDto(this.config);
     }
 
     protected boolean hasRequest() {

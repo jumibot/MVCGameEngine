@@ -4,7 +4,6 @@ import model.bodies.core.AbstractPhysicsBody;
 import model.bodies.ports.BodyEventProcessor;
 import model.bodies.ports.BodyState;
 import model.bodies.ports.BodyType;
-import model.bodies.ports.PhysicsBody;
 import model.physics.implementations.NullPhysicsEngine;
 import model.spatial.core.SpatialGrid;
 
@@ -49,19 +48,20 @@ public class StaticBody extends AbstractPhysicsBody {
      */
     public StaticBody(
             BodyEventProcessor bodyEventProcessor, SpatialGrid spatialGrid,
-            double size, double x, double y, double angle, 
+            double size, double x, double y, double angle,
             long maxLifeInSeconds) {
 
         super(
-            bodyEventProcessor, spatialGrid, 
-            new NullPhysicsEngine(size, x, y, angle), 
-            BodyType.STATIC, 
-            maxLifeInSeconds);
+                bodyEventProcessor, spatialGrid,
+                new NullPhysicsEngine(size, x, y, angle),
+                BodyType.STATIC,
+                maxLifeInSeconds);
     }
 
-    /**
-     * PUBLICS
-     */
+    //
+    // PUBLICS
+    //
+
     @Override
     public synchronized void activate() {
         super.activate();

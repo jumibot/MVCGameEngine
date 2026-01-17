@@ -14,7 +14,7 @@ public class DecoBody extends AbstractBody {
      */
     public DecoBody(BodyEventProcessor bodyEventProcessor, SpatialGrid spatialGrid,
             double size, double posX, double posY, double angle,
-            long maxLifeInSeconds) {
+            double maxLifeInSeconds) {
 
         super(bodyEventProcessor, spatialGrid,
                 new NullPhysicsEngine(size, posX, posY, angle),

@@ -16,13 +16,17 @@ public class AbstractPhysicsBody extends AbstractBody implements PhysicsBody {
         super(bodyEventProcessor, spatialGrid, phyEngine, bodyType, maxLifeInSeconds);
     }
 
+    public void doMovement(PhysicsValuesDTO phyValues) {
+        PhysicsEngine engine = this.getPhysicsEngine();
+        engine.setPhysicsValues(phyValues);
+    }
+
     public PhysicsValuesDTO getPhysicsValues() {
         return this.getPhysicsEngine().getPhysicsValues();
     }
 
-    public void doMovement(PhysicsValuesDTO phyValues) {
-        PhysicsEngine engine = this.getPhysicsEngine();
-        engine.setPhysicsValues(phyValues);
+    public boolean isThrusting() {
+        return this.getPhysicsEngine().isThrusting();
     }
 
     public void reboundInEast(PhysicsValuesDTO newVals, PhysicsValuesDTO oldVals,

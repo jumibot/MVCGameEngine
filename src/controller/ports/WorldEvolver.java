@@ -2,6 +2,7 @@ package controller.ports;
 
 import java.awt.Dimension;
 
+import world.ports.WorldDefEmitterDTO;
 import world.ports.WorldDefWeaponDTO;
 
 public interface WorldEvolver {
@@ -16,10 +17,12 @@ public interface WorldEvolver {
 
     public void addWeaponToPlayer(String playerId, WorldDefWeaponDTO weaponDef, int shootingOffset);
 
+    public void addEmitterToPlayer(
+            String playerId, WorldDefEmitterDTO bodyEmitterDef);
+
     public Dimension getWorldDimension();
 
     public EngineState getEngineState();
 
     public void setLocalPlayer(String playerId);
-
 }
